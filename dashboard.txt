@@ -1,0 +1,7 @@
+1)
+ + OBJ
+    + content/description
+    + purpose prompt
+ + purpose prompt
+ + insert scene
+    +
