@@ -1,7 +1,40 @@
-1)
+1) Metaprompt + Seed
+2) Scenes
+3) Glue
+
+===
+
+1) MetaPrompt
  + OBJ
     + content/description
     + purpose prompt
  + purpose prompt
- + insert scene
-    +
+
+ 2) Scenes
+ + Reorder
+ + describe/update each scene
+ + ammend transition prompting
+
+ 3) Generated Content
+ + feedback
+ + toolset
+
+===
+
+1) MetaPrompt
+- One general purpose text input prompt
+- Option to add an OBJ
+    - Option add content (upload file/files)
+        - Option to describe each uploaded object (text input)
+    - Optional description of entire OBJ (text input)
+
+ 2) Shots
+ Chain of blocks (containing text + linked content (reference to an OBJ)) with the following options
+ - Reorder blocks
+ - describe/update each scene (text description referenced content)
+ - ammend transition prompting
+
+ 3) Generated Content displayed in blocks - each block is a video - block provides the following options
+ - text input
+ - several parameters
+ - "toolset"
