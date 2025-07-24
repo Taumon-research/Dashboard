@@ -67,7 +67,7 @@ export default function Shots() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">2) Shots</CardTitle>
+        <CardTitle className="text-2xl font-bold">Shots</CardTitle>
         <p className="text-gray-600">Chain of blocks containing text and linked content</p>
       </CardHeader>
       <CardContent className="space-y-4">

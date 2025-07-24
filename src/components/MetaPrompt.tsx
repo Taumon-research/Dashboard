@@ -19,11 +19,7 @@ interface OBJ {
 
 export default function MetaPrompt() {
   const [prompt, setPrompt] = useState("")
-  const [objs, setObjs] = useState<OBJ[]>([{
-    id: crypto.randomUUID(),
-    uploadedFiles: [],
-    description: ""
-  }])
+  const [objs, setObjs] = useState<OBJ[]>([])
 
   const addOBJ = () => {
     setObjs(prev => [...prev, {
@@ -81,7 +77,7 @@ export default function MetaPrompt() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">1) MetaPrompt</CardTitle>
+        <CardTitle className="text-2xl font-bold">MetaPrompt</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
@@ -95,6 +91,12 @@ export default function MetaPrompt() {
         </div>
 
         <div className="space-y-4">
+          {/*{objs.length === 0 && (*/}
+          {/*  // <div className="text-center py-8 text-gray-500">*/}
+          {/*    /!*<Plus className="h-12 w-12 mx-auto mb-4 text-gray-300" />*!/*/}
+          {/*    /!*<p>No OBJs created yet. Click "Add Another OBJ" to get started.</p>*!/*/}
+          {/*  // </div>*/}
+          {/*)}*/}
           {objs.map((obj, objIndex) => (
             <Card key={obj.id} className="border-dashed border-2 border-gray-300">
               <CardHeader>
@@ -103,16 +105,14 @@ export default function MetaPrompt() {
                     <Plus className="h-5 w-5 mr-2" />
                     OBJ {objIndex + 1}
                   </CardTitle>
-                  {objs.length > 1 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeOBJ(obj.id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeOBJ(obj.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -186,7 +186,7 @@ export default function MetaPrompt() {
             className="w-full border-dashed border-2 border-gray-300 h-12 text-gray-600 hover:text-gray-900 hover:border-gray-400"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add Another OBJ
+            Add OBJ
           </Button>
         </div>
       </CardContent>

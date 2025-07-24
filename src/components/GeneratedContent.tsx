@@ -105,7 +105,7 @@ export default function GeneratedContent() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">3) Generated Content</CardTitle>
+        <CardTitle className="text-2xl font-bold">Generated Content</CardTitle>
         <p className="text-gray-600">Video blocks with parameters and toolset</p>
       </CardHeader>
       <CardContent className="space-y-6">
