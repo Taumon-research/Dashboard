@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import {useEffect, useState} from 'react'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import StepNavigation from './StepNavigation'
 import MetaPrompt from './MetaPrompt'
@@ -21,27 +21,22 @@ function WorkflowContent() {
   const { data } = useWorkflow()
 
   const validateCurrentStep = () => {
-    console.log(`validateCurrentStep called for step: ${currentStep}`)
-    let isValid = true
     switch (currentStep) {
       case 0: // MetaPrompt validation
-        isValid = data.metaPrompt.generalPrompt.trim().length > 0
-        break
+        console.log(data)
+        console.log("helooo")
+        return data.metaPrompt.generalPrompt.trim().length > 0
       case 1: // Shots validation
-        isValid = data.shots.length > 0 && data.shots.every(shot => shot.description.trim().length > 0)
-        break
+        return data.shots.length > 0 && data.shots.every(shot => shot.description.trim().length > 0)
       case 2: // GeneratedContent validation
-        isValid = data.generatedContent.length > 0
-        break
+        return data.generatedContent.length > 0
       default:
-        isValid = true
+        return true
     }
-    console.log(`Validation result for step ${currentStep}: ${isValid}`)
-    return isValid
   }
 
   const handleNext = () => {
-    if (currentStep < steps.length - 1 && validateCurrentStep()) {
+    if (currentStep < steps.length - 1) {
       const newCompletedSteps = [...completedSteps]
       newCompletedSteps[currentStep] = true
       setCompletedSteps(newCompletedSteps)
@@ -82,9 +77,16 @@ function WorkflowContent() {
     completed: completedSteps[index]
   }))
 
-  const isLastStep = currentStep === steps.length - 1
-  const isFirstStep = currentStep === 0
-  const canProceed = validateCurrentStep()
+  let isLastStep = currentStep === steps.length - 1
+  let isFirstStep = currentStep === 0
+  let canProceed = validateCurrentStep()
+
+  // useEffect(() => {
+  //   isLastStep = currentStep === steps.length - 1
+  //   isFirstStep = currentStep === 0
+  //   canProceed = validateCurrentStep()
+  //   console.log(canProceed)
+  // }, [currentStep, data.metaPrompt.generalPrompt])
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -102,17 +104,6 @@ function WorkflowContent() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
           {renderCurrentStep()}
         </div>
-
-        {/* Validation Message */}
-        {!canProceed && (
-          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-            <p className="text-sm text-yellow-800">
-              {currentStep === 0 && "Please enter a general prompt to continue."}
-              {currentStep === 1 && "Please add at least one shot with a description to continue."}
-              {currentStep === 2 && "Please configure at least one video block to continue."}
-            </p>
-          </div>
-        )}*/}
 
         {/* Navigation Controls */}
         <div className="flex justify-between items-center">
@@ -142,7 +133,7 @@ function WorkflowContent() {
           ) : (
             <Button
               onClick={handleNext}
-              disabled={!canProceed}
+              disabled={false}
               className="flex items-center gap-2 disabled:bg-gray-400"
             >
               Next
