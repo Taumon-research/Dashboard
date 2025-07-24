@@ -103,7 +103,7 @@ export default function MetaPrompt() {
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg flex items-center">
                     <Plus className="h-5 w-5 mr-2" />
-                    OBJ {objIndex + 1}
+                    <span>OBJ {objIndex + 1}</span>
                   </CardTitle>
                   <Button
                     variant="ghost"
