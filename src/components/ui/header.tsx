@@ -22,7 +22,7 @@ export function Header({ className, title = "AI Content Generator", subtitle = "
   const [showUserMenu, setShowUserMenu] = useState(false)
 
   return (
-    <header className={cn("glass-card border-b border-white/20 shadow-elegant backdrop-blur-xl", className)}>
+    <header className={cn("glass-card border-b border-white/20 shadow-elegant backdrop-blur-xl fade-in", className)}>
       <div className="flex items-center justify-between px-8 py-6">
         {/* Page Title */}
         <div>
@@ -31,35 +31,35 @@ export function Header({ className, title = "AI Content Generator", subtitle = "
         </div>
 
         {/* Header Actions */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-5">
           {/* Search */}
-          <div className="relative hidden md:block">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+          <div className="relative hidden md:block group">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 transition-colors duration-200 group-focus-within:text-blue-500" />
             <input
               type="text"
               placeholder="Search anything..."
-              className="pl-12 pr-6 py-3 w-72 glass-card border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/30 text-slate-700 placeholder-slate-500 font-medium backdrop-blur-sm transition-all duration-200"
+              className="pl-12 pr-6 py-3 w-72 glass-card border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/30 text-slate-700 placeholder-slate-500 font-medium backdrop-blur-sm transition-all duration-300 focus:w-80"
             />
           </div>
 
           {/* Notifications */}
-          <Button variant="ghost" size="sm" className="relative text-slate-600 hover:text-slate-900 hover-lift p-3 rounded-xl hover:bg-white/60 transition-all duration-200">
+          <Button variant="ghost" size="sm" className="relative text-slate-600 hover:text-slate-900 p-3 rounded-xl hover:bg-white/60 transition-colors duration-200">
             <Bell className="w-5 h-5" />
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full animate-pulse"></span>
           </Button>
 
           {/* Settings */}
-          <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 hover-lift p-3 rounded-xl hover:bg-white/60 transition-all duration-200">
+          <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 p-3 rounded-xl hover:bg-white/60 transition-colors duration-200">
             <Settings className="w-5 h-5" />
           </Button>
 
           {/* User Menu */}
-          <div className="relative">
+          <div className="relative group">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center space-x-3 text-slate-700 hover:text-slate-900 hover-lift p-3 rounded-xl hover:bg-white/60 transition-all duration-200"
+              className="flex items-center space-x-3 text-slate-700 hover:text-slate-900 p-3 rounded-xl hover:bg-white/60 transition-colors duration-200"
             >
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
                 <User className="w-5 h-5 text-white" />
@@ -73,7 +73,7 @@ export function Header({ className, title = "AI Content Generator", subtitle = "
 
             {/* Dropdown Menu */}
             {showUserMenu && (
-              <div className="absolute right-0 mt-3 w-56 glass-card rounded-2xl shadow-elegant border border-white/20 py-2 z-50 backdrop-blur-xl">
+              <div className="absolute right-0 mt-3 w-56 glass-card rounded-2xl shadow-elegant border border-white/20 py-2 z-50 backdrop-blur-xl fade-in">
                 <div className="px-4 py-3 border-b border-white/10">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
@@ -87,17 +87,17 @@ export function Header({ className, title = "AI Content Generator", subtitle = "
                   </div>
                 </div>
                 <div className="py-2">
-                  <Button variant="ghost" size="sm" className="w-full justify-start px-4 py-3 text-sm hover-lift hover:bg-white/60 transition-all duration-200">
+                  <Button variant="ghost" size="sm" className="w-full justify-start px-4 py-3 text-sm hover:bg-white/60 transition-colors duration-200">
                     <User className="w-4 h-4 mr-3" />
                     Profile Settings
                   </Button>
-                  <Button variant="ghost" size="sm" className="w-full justify-start px-4 py-3 text-sm hover-lift hover:bg-white/60 transition-all duration-200">
+                  <Button variant="ghost" size="sm" className="w-full justify-start px-4 py-3 text-sm hover:bg-white/60 transition-colors duration-200">
                     <Settings className="w-4 h-4 mr-3" />
                     Account Settings
                   </Button>
                 </div>
                 <div className="border-t border-white/10 pt-2">
-                  <Button variant="ghost" size="sm" className="w-full justify-start px-4 py-3 text-sm text-red-600 hover:text-red-700 hover:bg-red-50/80 hover-lift transition-all duration-200">
+                  <Button variant="ghost" size="sm" className="w-full justify-start px-4 py-3 text-sm text-red-600 hover:text-red-700 hover:bg-red-50/80 transition-colors duration-200">
                     <LogOut className="w-4 h-4 mr-3" />
                     Sign Out
                   </Button>
