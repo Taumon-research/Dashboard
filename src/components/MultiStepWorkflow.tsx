@@ -21,16 +21,23 @@ function WorkflowContent() {
   const { data } = useWorkflow()
 
   const validateCurrentStep = () => {
+    console.log(`validateCurrentStep called for step: ${currentStep}`)
+    let isValid = true
     switch (currentStep) {
       case 0: // MetaPrompt validation
-        return data.metaPrompt.generalPrompt.trim().length > 0
+        isValid = data.metaPrompt.generalPrompt.trim().length > 0
+        break
       case 1: // Shots validation
-        return data.shots.length > 0 && data.shots.every(shot => shot.description.trim().length > 0)
+        isValid = data.shots.length > 0 && data.shots.every(shot => shot.description.trim().length > 0)
+        break
       case 2: // GeneratedContent validation
-        return data.generatedContent.length > 0
+        isValid = data.generatedContent.length > 0
+        break
       default:
-        return true
+        isValid = true
     }
+    console.log(`Validation result for step ${currentStep}: ${isValid}`)
+    return isValid
   }
 
   const handleNext = () => {
@@ -105,7 +112,7 @@ function WorkflowContent() {
               {currentStep === 2 && "Please configure at least one video block to continue."}
             </p>
           </div>
-        )}
+        )}*/}
 
         {/* Navigation Controls */}
         <div className="flex justify-between items-center">
