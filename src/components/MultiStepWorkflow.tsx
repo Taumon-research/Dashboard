@@ -89,54 +89,62 @@ function WorkflowContent() {
   // }, [currentStep, data.metaPrompt.generalPrompt])
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Taumon AI Dashboard</h1>
-          <p className="text-gray-600">Create AI-generated content in 3 simple steps</p>
+    <div className="p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Step Navigation */}
+        <div className="mb-8">
+          <StepNavigation steps={stepsWithCompletion} currentStep={currentStep} />
         </div>
 
-        {/* Step Navigation */}
-        <StepNavigation steps={stepsWithCompletion} currentStep={currentStep} />
-
         {/* Current Step Content */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 mb-8">
           {renderCurrentStep()}
         </div>
 
         {/* Navigation Controls */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center bg-white rounded-lg border border-slate-200 p-6">
           <Button
             variant="outline"
             onClick={handlePrevious}
             disabled={isFirstStep}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border-slate-300 text-slate-700 hover:bg-slate-50"
           >
             <ChevronLeft className="w-4 h-4" />
             Previous
           </Button>
 
-          <div className="text-sm text-gray-500">
-            Step {currentStep + 1} of {steps.length}
+          <div className="flex items-center space-x-4">
+            <div className="text-sm text-slate-500">
+              Step {currentStep + 1} of {steps.length}
+            </div>
+            <div className="flex space-x-1">
+              {steps.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-2 h-2 rounded-full ${
+                    index <= currentStep ? 'bg-blue-600' : 'bg-slate-300'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
 
           {isLastStep ? (
             <Button
               onClick={handleComplete}
               disabled={!canProceed}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400"
+              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-400 text-white"
             >
               <Check className="w-4 h-4" />
-              Complete
+              Complete Workflow
             </Button>
           ) : (
             <Button
               onClick={handleNext}
               disabled={false}
-              className="flex items-center gap-2 disabled:bg-gray-400"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white"
             >
-              Next
+              Continue
               <ChevronRight className="w-4 h-4" />
             </Button>
           )}
