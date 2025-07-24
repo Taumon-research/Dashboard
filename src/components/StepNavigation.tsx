@@ -18,7 +18,7 @@ export default function StepNavigation({ steps, currentStep }: StepNavigationPro
   return (
     <div className="w-full">
       {/* Progress Bar */}
-      <div className="relative mx-16">
+      <div className="relative mx-11">
         <div className="absolute inset-0 flex items-center" aria-hidden="true">
           <div className="w-full border-t-2 border-slate-200" />
         </div>

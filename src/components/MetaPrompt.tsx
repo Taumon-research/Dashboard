@@ -91,12 +91,6 @@ export default function MetaPrompt() {
         </div>
 
         <div className="space-y-4">
-          {/*{objs.length === 0 && (*/}
-          {/*  // <div className="text-center py-8 text-gray-500">*/}
-          {/*    /!*<Plus className="h-12 w-12 mx-auto mb-4 text-gray-300" />*!/*/}
-          {/*    /!*<p>No OBJs created yet. Click "Add Another OBJ" to get started.</p>*!/*/}
-          {/*  // </div>*/}
-          {/*)}*/}
           {objs.map((obj, objIndex) => (
             <Card key={obj.id} className="border-dashed border-2 border-gray-300">
               <CardHeader>
