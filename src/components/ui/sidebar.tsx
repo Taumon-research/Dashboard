@@ -33,21 +33,21 @@ export function Sidebar({ className }: SidebarProps) {
   return (
     <div
       className={cn(
-        "relative flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-100 transition-all duration-300 ease-in-out shadow-2xl fade-in overflow-hidden",
-        isCollapsed ? "w-20" : "w-72",
+        "relative flex flex-col bg-white border-r border-gray-200 text-gray-900 transition-all duration-300 ease-in-out overflow-hidden",
+        isCollapsed ? "w-16" : "w-60",
         className
       )}
     >
       {/* Company Logo/Brand */}
-      <div className="relative flex items-center justify-between p-6 border-b border-slate-700/50">
+      <div className="relative flex items-center justify-between px-4 py-3 border-b border-gray-200">
         <div className="flex items-center space-x-3 group">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-            <Zap className="w-6 h-6 text-white" />
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <Zap className="w-4 h-4 text-white" />
           </div>
           {!isCollapsed && (
             <div>
-              <span className="text-2xl font-bold text-white tracking-tight">Taumon</span>
-              <p className="text-xs text-slate-400 font-medium">AI Platform</p>
+              <span className="text-lg font-medium text-gray-900">Taumon</span>
+              <p className="text-xs text-gray-500">AI Platform</p>
             </div>
           )}
         </div>
@@ -55,56 +55,52 @@ export function Sidebar({ className }: SidebarProps) {
           variant="ghost"
           size="sm"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-slate-400 hover:text-white hover:bg-slate-700/50 p-2 rounded-lg transition-colors duration-200"
+          className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1 rounded transition-colors duration-200"
         >
           {isCollapsed ? (
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4" />
           ) : (
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4" />
           )}
         </Button>
       </div>
 
       {/* Navigation Items */}
-      <nav className="relative flex-1 px-4 py-6 space-y-2">
+      <nav className="relative flex-1 px-2 py-4 space-y-1">
         {sidebarItems.map((item, index) => (
           <Button
             key={item.label}
             variant={item.active ? "secondary" : "ghost"}
             className={cn(
-              "w-full justify-start text-left font-medium group relative overflow-hidden transition-colors duration-200",
+              "w-full justify-start text-left font-normal group relative transition-colors duration-200",
               item.active 
-                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg border-0" 
-                : "text-slate-300 hover:text-white hover:bg-slate-700/50 border-0",
-              isCollapsed ? "px-3 py-3" : "px-4 py-3",
-              "rounded-xl"
+                ? "bg-blue-50 text-blue-600 border-0" 
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50 border-0",
+              isCollapsed ? "px-2 py-2" : "px-3 py-2",
+              "rounded-md"
             )}
           >
             {/* Active item indicator */}
             {item.active && (
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-purple-400 rounded-r-full" />
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r" />
             )}
             
             
             <item.icon className={cn(
-              "w-5 h-5 relative z-10",
-              !isCollapsed && "mr-4",
-              item.active && "drop-shadow-lg"
+              "w-4 h-4 relative z-10",
+              !isCollapsed && "mr-3"
             )} />
             
             {!isCollapsed && (
-              <span className="relative z-10 font-semibold tracking-wide">
+              <span className="relative z-10 font-normal">
                 {item.label}
               </span>
             )}
             
-            {!isCollapsed && item.active && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-white rounded-full" />
-            )}
             
             {/* Tooltip for collapsed state */}
             {isCollapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
                 {item.label}
               </div>
             )}
@@ -113,22 +109,19 @@ export function Sidebar({ className }: SidebarProps) {
       </nav>
 
       {/* User/Account Section */}
-      <div className="relative p-4 border-t border-slate-700/50">
-        <div className="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-700/30 transition-colors duration-200 cursor-pointer group">
-          <div className="relative w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
-            <span className="text-sm font-bold text-white">JD</span>
-            {/* Online indicator */}
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 border-2 border-slate-800 rounded-full">
-              <div className="w-full h-full bg-emerald-400 rounded-full"></div>
-            </div>
+      <div className="relative p-3 border-t border-gray-200">
+        <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50 transition-colors duration-200 cursor-pointer group">
+          <div className="relative w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
+            <span className="text-xs font-medium text-white">JD</span>
+            <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-400 border border-white rounded-full"></div>
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white truncate">John Doe</p>
-              <p className="text-xs text-slate-400 truncate font-medium">john@company.com</p>
-              <div className="flex items-center mt-1">
-                <div className="w-2 h-2 bg-emerald-400 rounded-full mr-2"></div>
-                <span className="text-xs text-emerald-400 font-medium">Online</span>
+              <p className="text-sm font-medium text-gray-900 truncate">John Doe</p>
+              <p className="text-xs text-gray-500 truncate">john@company.com</p>
+              <div className="flex items-center mt-0.5">
+                <div className="w-1.5 h-1.5 bg-green-400 rounded-full mr-1.5"></div>
+                <span className="text-xs text-gray-500">Online</span>
               </div>
             </div>
           )}

@@ -39,8 +39,8 @@
 
     --gradient-primary: linear-gradient(135deg, rgb(59 130 246) 0%, rgb(99 102 241) 100%);
     --gradient-secondary: linear-gradient(135deg, rgb(244 246 248) 0%, rgb(255 255 255) 100%);
-    --glass-bg: rgba(255, 255, 255, 0.8);
-    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-bg: rgba(255, 255, 255, 1);
+    --glass-border: rgba(229, 231, 235, 1);
 
     --radius: 0.75rem;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -94,10 +94,8 @@
 @layer components {
   .glass-card {
     background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--glass-border);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-sm);
   }
   
   .gradient-primary {
@@ -109,56 +107,26 @@
   }
   
   .shadow-elegant {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   }
   
   
   
   .fade-in {
-    animation: fadeIn 0.3s ease-out;
+    opacity: 1;
   }
   
   .fade-in-up {
-    animation: fadeInUp 0.5s ease-out;
+    opacity: 1;
   }
   
   .slide-in-right {
-    animation: slideInRight 0.4s ease-out;
+    opacity: 1;
   }
   
   
   
 }
 
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInRight {
-  0% {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
 
 

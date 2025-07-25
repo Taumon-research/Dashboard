@@ -16,18 +16,18 @@ interface StepNavigationProps {
 
 export default function StepNavigation({ steps, currentStep }: StepNavigationProps) {
   return (
-    <div className="w-full fade-in">
+    <div className="w-full">
       {/* Progress Bar */}
-      <div className="relative mx-12">
+      <div className="relative mx-4">
         {/* Background Progress Line */}
         <div className="absolute inset-0 flex items-center" aria-hidden="true">
-          <div className="w-full h-1 bg-gradient-to-r from-slate-200 via-slate-200 to-slate-200 rounded-full" />
+          <div className="w-full h-0.5 bg-gray-200 rounded-full" />
         </div>
         
         {/* Active Progress Line */}
         <div className="absolute inset-0 flex items-center" aria-hidden="true">
           <div 
-            className="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 rounded-full transition-all duration-700 ease-out shadow-lg"
+            className="h-0.5 bg-blue-600 rounded-full transition-all duration-500 ease-out"
             style={{
               width: `${(currentStep / (steps.length - 1)) * 100}%`
             }}
@@ -39,19 +39,19 @@ export default function StepNavigation({ steps, currentStep }: StepNavigationPro
           {steps.map((step, index) => (
             <div
               key={step.id}
-              className={`relative flex items-center justify-center w-14 h-14 rounded-full border-3 transition-all duration-300 ease-out ${
+              className={`relative flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-200 ease-out ${
                 index < currentStep
-                  ? 'border-blue-500 bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-xl'
+                  ? 'border-blue-600 bg-blue-600 text-white'
                   : index === currentStep
-                  ? 'border-blue-500 text-blue-600 bg-white shadow-2xl ring-4 ring-blue-100'
-                  : 'border-slate-300 text-slate-400 bg-white shadow-md hover:border-slate-400 hover:shadow-lg'
+                  ? 'border-blue-600 text-blue-600 bg-white ring-2 ring-blue-100'
+                  : 'border-gray-300 text-gray-400 bg-white hover:border-gray-400'
               }`}
             >
               {/* Completed Step Icon */}
               {index < currentStep ? (
-                <Check className="w-6 h-6" />
+                <Check className="w-4 h-4" />
               ) : (
-                <span className="text-sm font-bold tracking-wide">{step.id}</span>
+                <span className="text-xs font-medium">{step.id}</span>
               )}
               
             </div>
@@ -60,36 +60,33 @@ export default function StepNavigation({ steps, currentStep }: StepNavigationPro
       </div>
       
       {/* Step Labels */}
-      <div className="flex justify-between mt-8">
+      <div className="flex justify-between mt-4">
         {steps.map((step, index) => (
           <div 
             key={step.id} 
-            className="text-center max-w-[160px] transition-colors duration-200"
+            className="text-center max-w-[120px] transition-colors duration-200"
           >
             <div>
-              <p className={`text-base font-bold tracking-wide transition-colors duration-300 ${
+              <p className={`text-sm font-medium transition-colors duration-200 ${
                 index < currentStep 
-                  ? 'text-blue-600 drop-shadow-sm' 
+                  ? 'text-blue-600' 
                   : index === currentStep
-                  ? 'text-slate-900 drop-shadow-sm'
-                  : 'text-slate-500'
+                  ? 'text-gray-900'
+                  : 'text-gray-500'
               }`}>
                 {step.title}
               </p>
-              <p className={`text-sm mt-2 font-medium transition-colors duration-300 ${
+              <p className={`text-xs mt-1 transition-colors duration-200 ${
                 index < currentStep 
-                  ? 'text-blue-500/80' 
+                  ? 'text-blue-500' 
                   : index === currentStep
-                  ? 'text-slate-600'
-                  : 'text-slate-400'
+                  ? 'text-gray-600'
+                  : 'text-gray-400'
               }`}>
                 {step.description}
               </p>
               
               {/* Progress Indicator */}
-              {index <= currentStep && (
-                <div className="mt-3 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full" />
-              )}
             </div>
           </div>
         ))}
