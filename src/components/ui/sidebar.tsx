@@ -8,7 +8,7 @@ import {
   BarChart3, 
   Users, 
   FileText, 
-  Zap,
+  Cone,
   ChevronLeft,
   ChevronRight
 } from "lucide-react"
@@ -20,8 +20,8 @@ interface SidebarProps {
 
 const sidebarItems = [
   { icon: Home, label: "Dashboard", href: "/" },
-  { icon: Zap, label: "AI Generator", href: "/", active: true },
-  { icon: BarChart3, label: "Analytics", href: "/analytics" },
+  { icon: Cone, label: "Refract AI", href: "/", active: true },
+  { icon: BarChart3, label: "Tools", href: "/analytics" },
   { icon: FileText, label: "Content Library", href: "/library" },
   { icon: Users, label: "Team", href: "/team" },
   { icon: Settings, label: "Settings", href: "/settings" },
@@ -42,7 +42,7 @@ export function Sidebar({ className }: SidebarProps) {
       <div className="relative flex items-center justify-between px-4 py-3 border-b border-gray-200">
         <div className="flex items-center space-x-3 group">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <Zap className="w-4 h-4 text-white" />
+            <Cone className="w-4 h-4 text-white" />
           </div>
           {!isCollapsed && (
             <div>

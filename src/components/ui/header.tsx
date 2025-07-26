@@ -18,7 +18,8 @@ interface HeaderProps {
   subtitle?: string
 }
 
-export function Header({ className, title = "AI Content Generator", subtitle = "Create professional content with advanced AI tools" }: HeaderProps) {
+export function Header({ className, title = "Refract AI", subtitle = "Comprehensive Advertisement Generator" }: HeaderProps) {
+
   const [showUserMenu, setShowUserMenu] = useState(false)
 
   return (
@@ -33,14 +34,14 @@ export function Header({ className, title = "AI Content Generator", subtitle = "
         {/* Header Actions */}
         <div className="flex items-center space-x-2">
           {/* Search */}
-          <div className="relative hidden md:block group">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 transition-colors duration-200 group-focus-within:text-blue-600" />
-            <input
-              type="text"
-              placeholder="Search anything..."
-              className="pl-10 pr-4 py-2 w-56 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 text-gray-900 placeholder-gray-500 transition-all duration-200 focus:w-64"
-            />
-          </div>
+          {/*<div className="relative hidden md:block group">*/}
+          {/*  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 transition-colors duration-200 group-focus-within:text-blue-600" />*/}
+          {/*  <input*/}
+          {/*    type="text"*/}
+          {/*    placeholder="Search anything..."*/}
+          {/*    className="pl-10 pr-4 py-2 w-56 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 text-gray-900 placeholder-gray-500 transition-all duration-200 focus:w-64"*/}
+          {/*  />*/}
+          {/*</div>*/}
 
           {/* Notifications */}
           <Button variant="ghost" size="sm" className="relative text-gray-600 hover:text-gray-900 p-2 rounded-md hover:bg-gray-100 transition-colors duration-200">
@@ -64,10 +65,10 @@ export function Header({ className, title = "AI Content Generator", subtitle = "
               <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-white" />
               </div>
-              <div className="hidden md:block text-left">
-                <p className="text-sm font-medium text-gray-900">John Doe</p>
-                <p className="text-xs text-gray-500">Premium Plan</p>
-              </div>
+              {/*<div className="hidden md:block text-left">*/}
+              {/*  <p className="text-sm font-medium text-gray-900">John Doe</p>*/}
+              {/*  <p className="text-xs text-gray-500">Premium Plan</p>*/}
+              {/*</div>*/}
               <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", showUserMenu && "rotate-180")} />
             </Button>
 
