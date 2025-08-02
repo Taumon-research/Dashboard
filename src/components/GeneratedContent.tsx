@@ -14,7 +14,9 @@ import {
   Music, 
   Film,
   Download,
-  Share2
+  Share2,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react"
 
 interface VideoBlock {

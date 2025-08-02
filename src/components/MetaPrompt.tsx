@@ -177,7 +177,8 @@ export default function MetaPrompt() {
           <Button 
             onClick={addOBJ}
             variant="outline"
-            className="w-full border-dashed border-2 border-gray-300 h-12 text-gray-600 hover:text-gray-900 hover:border-gray-400"
+            size="sm"
+            className="border-dashed border-2 border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add OBJ

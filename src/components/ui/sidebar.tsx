@@ -113,7 +113,7 @@ export function Sidebar({ className }: SidebarProps) {
         <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50 transition-colors duration-200 cursor-pointer group">
           <div className="relative w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
             <span className="text-xs font-medium text-white">JD</span>
-            <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-400 border border-white rounded-full"></div>
+          {/*  <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-400 border border-white rounded-full"></div>*/}
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
