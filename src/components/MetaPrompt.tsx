@@ -174,15 +174,6 @@ export default function MetaPrompt() {
             </Card>
           ))}
           
-          <Button 
-            onClick={addOBJ}
-            variant="outline"
-            size="sm"
-            className="border-dashed border-2 border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add OBJ
-          </Button>
         </div>
       </CardContent>
     </Card>

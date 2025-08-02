@@ -146,7 +146,7 @@ function WorkflowContent() {
               disabled={false}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-md transition-all duration-200"
             >
-              Continue
+              {currentStep === 0 && data.metaPrompt.generalPrompt.trim().length === 0 ? 'Skip' : 'Continue'}
               <ChevronRight className="w-4 h-4" />
             </Button>
           )}
