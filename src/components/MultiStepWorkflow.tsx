@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import StepNavigation from './StepNavigation'
 import MetaPrompt from './MetaPrompt'
+import TextShots from './TextShots'
 import Shots from './Shots'
 import GeneratedContent from './GeneratedContent'
 import { Button } from './ui/button'
@@ -11,13 +12,14 @@ import { WorkflowProvider, useWorkflow } from '@/contexts/WorkflowContext'
 
 const steps = [
   { id: 1, title: 'MetaPrompt', description: 'Set up prompts and objects', completed: false },
-  { id: 2, title: 'Shots', description: 'Create scene sequences', completed: false },
-  { id: 3, title: 'Generated Content', description: 'Configure video output', completed: false }
+  { id: 2, title: 'Text Blocks', description: 'Create text-focused content', completed: false },
+  { id: 3, title: 'Shots', description: 'Create scene sequences', completed: false },
+  { id: 4, title: 'Generated Content', description: 'Configure video output', completed: false }
 ]
 
 function WorkflowContent() {
   const [currentStep, setCurrentStep] = useState(0)
-  const [completedSteps, setCompletedSteps] = useState<boolean[]>([false, false, false])
+  const [completedSteps, setCompletedSteps] = useState<boolean[]>([false, false, false, false])
   const { data } = useWorkflow()
 
   const validateCurrentStep = () => {
@@ -26,9 +28,11 @@ function WorkflowContent() {
         console.log(data)
         console.log("helooo")
         return data.metaPrompt.generalPrompt.trim().length > 0
-      case 1: // Shots validation
+      case 1: // TextShots validation
+        return data.textShots.length > 0 && data.textShots.every(textShot => textShot.content.trim().length > 0)
+      case 2: // Shots validation
         return data.shots.length > 0 && data.shots.every(shot => shot.description.trim().length > 0)
-      case 2: // GeneratedContent validation
+      case 3: // GeneratedContent validation
         return data.generatedContent.length > 0
       default:
         return true
@@ -64,8 +68,10 @@ function WorkflowContent() {
       case 0:
         return <MetaPrompt />
       case 1:
-        return <Shots />
+        return <TextShots />
       case 2:
+        return <Shots />
+      case 3:
         return <GeneratedContent />
       default:
         return <MetaPrompt />

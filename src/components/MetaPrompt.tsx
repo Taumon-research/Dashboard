@@ -81,7 +81,7 @@ export default function MetaPrompt() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <label className="block text-sm font-medium mb-2">General Purpose Prompt</label>
+          {/*<label className="block text-sm font-medium mb-2">General Purpose Prompt</label>*/}
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
