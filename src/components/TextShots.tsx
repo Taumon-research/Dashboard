@@ -18,7 +18,62 @@ export default function TextShots() {
     data.textShots?.length > 0 ? data.textShots : [
       {
         id: "1",
-        content: "",
+        content: "Shot 1: Slow-motion, cinematic b-roll of nature. Think misty mountains, a tranquil lake at sunrise, or a serene forest. The focus is on the beauty and peace of the natural world.",
+        referencedAssets: []
+      },
+      {
+        id: "2",
+        content: "Shot 2: A close-up, slow pan over the subtle textures of the jacket fabric. You can see the intricate weaving and quality stitching. The lighting is soft and natural.",
+        referencedAssets: []
+      },
+      {
+        id: "3",
+        content: "Shot 3: A slow, sweeping shot of a model from behind, standing on a cliff overlooking a vast landscape. The wind gently blows the jacket. The feeling is one of contemplation and solitude.",
+        referencedAssets: []
+      },
+      {
+        id: "4",
+        content: "Shot 4: A quick, jarring cut from the serene landscape to a pulsating, energetic scene. The sound of a runway show begins to fade in. The shot is a fast-paced, shaky-cam shot of a bustling backstage.",
+        referencedAssets: []
+      },
+      {
+        id: "5",
+        content: "Shot 5: A quick close-up on a model's face as she gets the final touch-ups of her makeup, her eyes focused and intense.",
+        referencedAssets: []
+      },
+      {
+        id: "6",
+        content: "Shot 6: The camera follows a different model as she walks onto the runway. The runway lights are bright and dramatic.",
+        referencedAssets: []
+      },
+      {
+        id: "7",
+        content: "Shot 7: A series of fast-paced, high-energy runway shots. Models of different backgrounds and body types confidently walk the runway, showing off various jackets from the new line.",
+        referencedAssets: []
+      },
+      {
+        id: "8",
+        content: "Shot 8: Close-ups of the jackets in motion. We see how the fabric drapes and moves, the intricate details, and the unique cuts. The lighting is sharp and highlights the jacket's silhouette.",
+        referencedAssets: []
+      },
+      {
+        id: "9",
+        content: "Shot 9: A shot of the jackets styled in various ways—paired with elegant evening wear, casual street clothes, and work attire. This demonstrates the versatility of the jackets.",
+        referencedAssets: []
+      },
+      {
+        id: "10",
+        content: "Shot 10: A final, powerful shot of a model walking towards the camera. She stops, looks directly into the lens, and smiles. The music starts to fade out.",
+        referencedAssets: []
+      },
+      {
+        id: "11",
+        content: "Shot 11: The brand's logo appears on a black screen. A website or social media handle is included beneath it.",
+        referencedAssets: []
+      },
+      {
+        id: "12",
+        content: "Shot 12: The screen slowly fades to black.",
         referencedAssets: []
       }
     ]

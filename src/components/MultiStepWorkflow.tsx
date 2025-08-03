@@ -20,6 +20,7 @@ const steps = [
 function WorkflowContent() {
   const [currentStep, setCurrentStep] = useState(0)
   const [completedSteps, setCompletedSteps] = useState<boolean[]>([false, false, false, false])
+  const [isLoading, setIsLoading] = useState(false)
   const { data } = useWorkflow()
 
   const validateCurrentStep = () => {
@@ -41,16 +42,26 @@ function WorkflowContent() {
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
+      setIsLoading(true)
       const newCompletedSteps = [...completedSteps]
       newCompletedSteps[currentStep] = true
       setCompletedSteps(newCompletedSteps)
-      setCurrentStep(currentStep + 1)
+      
+      setTimeout(() => {
+        setCurrentStep(currentStep + 1)
+        setIsLoading(false)
+      }, 1000)
     }
   }
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
+      setIsLoading(true)
+      
+      setTimeout(() => {
+        setCurrentStep(currentStep - 1)
+        setIsLoading(false)
+      }, 1000)
     }
   }
 
@@ -104,7 +115,17 @@ function WorkflowContent() {
 
         {/* Current Step Content */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-          {renderCurrentStep()}
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <img 
+                src="/spinning-logo.gif" 
+                alt="Loading..." 
+                className="w-16 h-16"
+              />
+            </div>
+          ) : (
+            renderCurrentStep()
+          )}
         </div>
 
         {/* Navigation Controls */}
