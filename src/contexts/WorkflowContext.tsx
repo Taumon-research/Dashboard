@@ -21,6 +21,12 @@ interface Shot {
   transitionPrompt: string
 }
 
+interface TextShot {
+  id: string
+  content: string
+  referencedAssets: string[]
+}
+
 interface VideoBlock {
   id: string
   textInput: string
@@ -38,6 +44,7 @@ interface WorkflowData {
     generalPrompt: string
     objs: OBJ[]
   }
+  textShots: TextShot[]
   shots: Shot[]
   generatedContent: VideoBlock[]
 }
@@ -45,6 +52,7 @@ interface WorkflowData {
 interface WorkflowContextType {
   data: WorkflowData
   updateMetaPrompt: (generalPrompt: string, objs: OBJ[]) => void
+  updateTextShots: (textShots: TextShot[]) => void
   updateShots: (shots: Shot[]) => void
   updateGeneratedContent: (content: VideoBlock[]) => void
 }
@@ -56,6 +64,7 @@ const initialData: WorkflowData = {
     generalPrompt: '',
     objs: []
   },
+  textShots: [],
   shots: [],
   generatedContent: []
 }
@@ -67,6 +76,13 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
     setData(prev => ({
       ...prev,
       metaPrompt: { generalPrompt, objs }
+    }))
+  }
+
+  const updateTextShots = (textShots: TextShot[]) => {
+    setData(prev => ({
+      ...prev,
+      textShots
     }))
   }
 
@@ -88,6 +104,7 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
     <WorkflowContext.Provider value={{
       data,
       updateMetaPrompt,
+      updateTextShots,
       updateShots,
       updateGeneratedContent
     }}>

@@ -81,7 +81,7 @@ export default function MetaPrompt() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <label className="block text-sm font-medium mb-2">General Purpose Prompt</label>
+          {/*<label className="block text-sm font-medium mb-2">General Purpose Prompt</label>*/}
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
@@ -174,14 +174,6 @@ export default function MetaPrompt() {
             </Card>
           ))}
           
-          <Button 
-            onClick={addOBJ}
-            variant="outline"
-            className="w-full border-dashed border-2 border-gray-300 h-12 text-gray-600 hover:text-gray-900 hover:border-gray-400"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add OBJ
-          </Button>
         </div>
       </CardContent>
     </Card>
