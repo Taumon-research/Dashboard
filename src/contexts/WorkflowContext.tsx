@@ -24,7 +24,7 @@ interface Shot {
 interface TextShot {
   id: string
   content: string
-  metadata: string
+  referencedAssets: string[]
 }
 
 interface VideoBlock {
