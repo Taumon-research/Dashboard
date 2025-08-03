@@ -179,6 +179,7 @@ function TimelineBlock({ shot, index, isLast, onUpdate, onRemove, onSelect, onTo
 }
 
 export default function Shots() {
+  const [isVisible, setIsVisible] = useState(false)
   const [shots, setShots] = useState<Shot[]>([
     {
       id: "1",
@@ -248,6 +249,11 @@ export default function Shots() {
   useEffect(() => {
     updateScrollButtons()
   }, [shots])
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 100)
+    return () => clearTimeout(timer)
+  }, [])
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -343,17 +349,24 @@ export default function Shots() {
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {shots.map((shot, index) => (
-              <TimelineBlock
+              <div
                 key={shot.id}
-                shot={shot}
-                index={index}
-                isLast={index === shots.length - 1}
-                onUpdate={updateShot}
-                onRemove={removeShot}
-                onSelect={selectShot}
-                onToolset={handleToolset}
-                disabled={shots.length === 1}
-              />
+                className={`transition-all duration-500 transform ${
+                  isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+                }`}
+                style={{ transitionDelay: `${index * 150}ms` }}
+              >
+                <TimelineBlock
+                  shot={shot}
+                  index={index}
+                  isLast={index === shots.length - 1}
+                  onUpdate={updateShot}
+                  onRemove={removeShot}
+                  onSelect={selectShot}
+                  onToolset={handleToolset}
+                  disabled={shots.length === 1}
+                />
+              </div>
             ))}
             
             <Card className="min-w-[200px] flex-shrink-0 border-dashed border-2 border-gray-300 flex items-center justify-center hover:border-indigo-400 transition-colors">

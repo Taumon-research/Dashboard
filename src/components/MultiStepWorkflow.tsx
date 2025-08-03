@@ -61,7 +61,7 @@ function WorkflowContent() {
       setTimeout(() => {
         setCurrentStep(currentStep - 1)
         setIsLoading(false)
-      }, 1000)
+      }, 2000)
     }
   }
 

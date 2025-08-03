@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { GripVertical, ArrowLeft, ArrowRight, X, Plus, ChevronLeft, ChevronRight, Image, FileText, Link2 } from "lucide-react"
@@ -14,6 +14,7 @@ interface TextShot {
 
 export default function TextShots() {
   const { data, updateTextShots } = useWorkflow()
+  const [isVisible, setIsVisible] = useState(false)
   const [textShots, setTextShots] = useState<TextShot[]>(
     data.textShots?.length > 0 ? data.textShots : [
       {
@@ -81,6 +82,11 @@ export default function TextShots() {
   const [scrollPosition, setScrollPosition] = useState(0)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 100)
+    return () => clearTimeout(timer)
+  }, [])
 
   const addTextShot = () => {
     const newTextShot: TextShot = {
@@ -206,7 +212,10 @@ export default function TextShots() {
         >
           {textShots.map((textShot, index) => (
               <div key={textShot.id}
-                   className="min-w-[400px] border-2 border-blue-200 rounded-lg p-4 flex-shrink-0 bg-blue-50 shadow-sm">
+                   className={`min-w-[400px] border-2 border-blue-200 rounded-lg p-4 flex-shrink-0 bg-blue-50 shadow-sm transition-all duration-500 transform ${
+                     isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+                   }`}
+                   style={{ transitionDelay: `${index * 150}ms` }}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <div
