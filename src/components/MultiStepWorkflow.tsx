@@ -6,7 +6,7 @@ import StepNavigation from './StepNavigation'
 import MetaPrompt from './MetaPrompt'
 import TextShots from './TextShots'
 import Shots from './Shots'
-import GeneratedContent from './GeneratedContent'
+import ExportContent from './ExportContent'
 import { Button } from './ui/button'
 import { WorkflowProvider, useWorkflow } from '@/contexts/WorkflowContext'
 
@@ -14,7 +14,7 @@ const steps = [
   { id: 1, title: 'MetaPrompt', description: 'Set up prompts and objects', completed: false },
   { id: 2, title: 'Text Blocks', description: 'Create text-focused content', completed: false },
   { id: 3, title: 'Shots', description: 'Create scene sequences', completed: false },
-  { id: 4, title: 'Generated Content', description: 'Configure video output', completed: false }
+  { id: 4, title: 'Export Content', description: 'Export your generated video', completed: false }
 ]
 
 function WorkflowContent() {
@@ -72,7 +72,7 @@ function WorkflowContent() {
       case 2:
         return <Shots />
       case 3:
-        return <GeneratedContent />
+        return <ExportContent />
       default:
         return <MetaPrompt />
     }
