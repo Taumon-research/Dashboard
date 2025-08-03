@@ -11,9 +11,9 @@ import { Button } from './ui/button'
 import { WorkflowProvider, useWorkflow } from '@/contexts/WorkflowContext'
 
 const steps = [
-  { id: 1, title: 'MetaPrompt', description: 'Set up prompts and objects', completed: false },
-  { id: 2, title: 'Text Blocks', description: 'Create text-focused content', completed: false },
-  { id: 3, title: 'Shots', description: 'Create scene sequences', completed: false },
+  { id: 1, title: 'Meta Prompt', description: 'Set up prompts and objects', completed: false },
+  { id: 2, title: 'Text Blocks', description: 'Scene Text Descriptions', completed: false },
+  { id: 3, title: 'Video Blocks', description: 'Scene Video sequences', completed: false },
   { id: 4, title: 'Export Content', description: 'Export your generated video', completed: false }
 ]
 
@@ -152,7 +152,8 @@ function WorkflowContent() {
               disabled={false}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-md transition-all duration-200"
             >
-              {currentStep === 0 && data.metaPrompt.generalPrompt.trim().length === 0 ? 'Skip' : 'Continue'}
+              {/*{currentStep === 0 && data.metaPrompt.generalPrompt.trim().length === 0 ? 'Skip' : 'Continue'}*/}
+              Continue
               <ChevronRight className="w-4 h-4" />
             </Button>
           )}
