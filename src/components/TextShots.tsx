@@ -190,7 +190,7 @@ export default function TextShots() {
               value={textShot.content}
               onChange={(e) => updateTextShot(textShot.id, 'content', e.target.value)}
               placeholder="Enter your text..."
-              className="w-full h-32 p-3 border border-blue-300 rounded bg-white resize-y mb-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+              className="w-full h-48 p-3 border border-blue-300 rounded bg-white resize-y mb-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
             />
             
             <div className="space-y-2">
