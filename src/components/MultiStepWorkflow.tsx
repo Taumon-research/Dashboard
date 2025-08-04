@@ -26,8 +26,6 @@ function WorkflowContent() {
   const validateCurrentStep = () => {
     switch (currentStep) {
       case 0: // MetaPrompt validation
-        console.log(data)
-        console.log("helooo")
         return data.metaPrompt.generalPrompt.trim().length > 0
       case 1: // TextShots validation
         return data.textShots.length > 0 && data.textShots.every(textShot => textShot.content.trim().length > 0)

@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Upload, X, Plus } from "lucide-react"
+import { useWorkflow } from "@/contexts/WorkflowContext"
 
 interface UploadedFile {
   file: File
@@ -18,9 +19,15 @@ interface OBJ {
 }
 
 export default function MetaPrompt() {
-  const [prompt, setPrompt] = useState("")
-  const [objs, setObjs] = useState<OBJ[]>([])
+  const { data, updateMetaPrompt } = useWorkflow()
+  const [prompt, setPrompt] = useState(data.metaPrompt.generalPrompt)
+  const [objs, setObjs] = useState<OBJ[]>(data.metaPrompt.objs)
   const [dragOver, setDragOver] = useState<string | null>(null)
+
+  // Update workflow context whenever prompt or objs change
+  useEffect(() => {
+    updateMetaPrompt(prompt, objs)
+  }, [prompt, objs, updateMetaPrompt])
 
   const addOBJ = () => {
     setObjs(prev => [...prev, {

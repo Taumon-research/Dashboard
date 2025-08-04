@@ -269,14 +269,19 @@ export default function TextShots() {
                           }
                           e.target.value = ""
                         }}
-                        className="text-xs border border-blue-300 rounded px-2 py-1 bg-white"
+                        className="text-xs border border-blue-300 rounded px-2 py-1 bg-white max-w-32"
+                        disabled={data.metaPrompt.objs.length === 0}
                     >
-                      <option value="">Add asset...</option>
-                      {data.metaPrompt.objs.map(obj => (
+                      <option value="">{data.metaPrompt.objs.length === 0 ? 'No assets available' : 'Add asset...'}</option>
+                      {data.metaPrompt.objs.map(obj => {
+                        const displayName = obj.description || `Object ${obj.id}`
+                        const truncatedName = displayName.length > 15 ? displayName.substring(0, 15) + '...' : displayName
+                        return (
                           <option key={obj.id} value={obj.id}>
-                            {obj.description || `Object ${obj.id}`}
+                            {truncatedName} ({obj.uploadedFiles.length})
                           </option>
-                      ))}
+                        )
+                      })}
                     </select>
                   </div>
 
@@ -285,12 +290,20 @@ export default function TextShots() {
                       const asset = data.metaPrompt.objs.find(obj => obj.id === assetId)
                       return (
                           <div key={assetId}
-                               className="flex items-center gap-1 bg-blue-100 border border-blue-200 rounded px-2 py-1 text-xs">
+                               className="flex items-center gap-1 bg-blue-100 border border-blue-200 rounded px-2 py-1 text-xs group hover:bg-blue-200 transition-colors">
                             <Image className="h-3 w-3 text-blue-600"/>
-                            <span className="text-blue-800">{asset?.description || `Asset ${assetId}`}</span>
+                            <div className="flex flex-col">
+                              <span className="text-blue-800 font-medium">{asset?.description || `Asset ${assetId}`}</span>
+                              {asset && asset.uploadedFiles.length > 0 && (
+                                <span className="text-blue-600 text-[10px]">
+                                  {asset.uploadedFiles.length} file{asset.uploadedFiles.length !== 1 ? 's' : ''}: {asset.uploadedFiles.map(f => f.file.name).join(', ')}
+                                </span>
+                              )}
+                            </div>
                             <button
                                 onClick={() => removeAssetReference(textShot.id, assetId)}
-                                className="ml-1 text-red-500 hover:text-red-700"
+                                className="ml-1 text-red-500 hover:text-red-700 opacity-70 group-hover:opacity-100 transition-opacity"
+                                title="Remove asset reference"
                             >
                               <X className="h-3 w-3"/>
                             </button>
@@ -298,7 +311,11 @@ export default function TextShots() {
                       )
                     })}
                     {textShot.referencedAssets.length === 0 && (
-                        <div className="text-xs text-gray-500 py-2">No assets referenced</div>
+                        <div className="text-xs text-gray-500 py-2 italic">
+                          {data.metaPrompt.objs.length === 0 
+                            ? 'No assets uploaded in Meta Prompt step' 
+                            : 'No assets referenced'}
+                        </div>
                     )}
                   </div>
                 </div>
