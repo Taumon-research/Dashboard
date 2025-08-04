@@ -15,6 +15,7 @@ interface TextShot {
 export default function TextShots() {
   const { data, updateTextShots } = useWorkflow()
   const [isVisible, setIsVisible] = useState(false)
+  
   const [textShots, setTextShots] = useState<TextShot[]>(
     data.textShots?.length > 0 ? data.textShots : [
       {

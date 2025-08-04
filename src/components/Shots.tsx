@@ -180,10 +180,36 @@ function TimelineBlock({ shot, index, isLast, onUpdate, onRemove, onSelect, onTo
 
 export default function Shots() {
   const [isVisible, setIsVisible] = useState(false)
+  // Available cover images from public directory
+  const availableCoverImages = [
+    "/image1.jpg",
+    "/image2.jpg", 
+    "/image3.jpg",
+    "/image4.jpg"
+  ]
+
   const [shots, setShots] = useState<Shot[]>([
     {
       id: "1",
-      coverImage: "",
+      coverImage: availableCoverImages[0],
+      references: [],
+      selected: false
+    },
+    {
+      id: "2",
+      coverImage: availableCoverImages[1],
+      references: [],
+      selected: false
+    },
+    {
+      id: "3",
+      coverImage: availableCoverImages[2],
+      references: [],
+      selected: false
+    },
+    {
+      id: "4",
+      coverImage: availableCoverImages[3],
       references: [],
       selected: false
     }
@@ -196,7 +222,8 @@ export default function Shots() {
   const addShot = () => {
     const newShot: Shot = {
       id: Date.now().toString(),
-      coverImage: "",
+      // Cycle through available images based on shot count
+      coverImage: availableCoverImages[shots.length % availableCoverImages.length],
       references: [],
       selected: false
     }
