@@ -404,7 +404,9 @@ export default function Shots() {
       
       const updatedShots = shots.map(shot => {
         if (shouldUpdateAll || shot.selected) {
-          return { ...shot, description: query }
+          // Replace video1a with video1b when processing query
+          const newVideoUrl = shot.videoUrl === "/video1a.mp4" ? "/video1b.mp4" : shot.videoUrl
+          return { ...shot, description: query, videoUrl: newVideoUrl }
         }
         return shot
       })

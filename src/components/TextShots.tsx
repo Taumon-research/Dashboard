@@ -188,9 +188,9 @@ export default function TextShots() {
     
     setTimeout(() => {
       let tmp_update_content = [
-        "A blazing, high-speed drone shot zips through a dense, urban jungle of skyscrapers. The city lights blur into streaks of color.",
-        "A quick, aggressive close-up on the jacket fabric. The camera focuses intensely on the texture, highlighting a metallic sheen or a unique, rugged weave. The lighting is sharp, creating dramatic shadows.",
-        "A model, silhouetted against a setting sun, stands on the edge of a rooftop. The city sprawls below. The wind whips her jacket and hair as she stares out, a sense of unyielding power and purpose radiating from her stance.",
+        "A wide shot of a chaotic informal office space. Insert a clothing rank in the background. Desks are overflowing with papers and empty coffee cups. People bustle around. Distracted film crew can be seen in background. Monitors glow, illuminating tired faces. Anna\\\\\\'s desk is particularly messy, piled high with printouts and half-eaten snacks. The overall impression is one of overwhelming disarray. Anna is visibly agitated and stressed. She appears grizzled.",
+        "Continue from previous scene, with the lone harried marketind director in the middle. She appears tired and begins falling asleep",
+        "Same setting, but now it is night time: Computer terminal illuminates the woman's face. Woman slowly wakes up.",
         "A sudden, jarring cut from the rooftop to a pulsating, high-energy scene. The blare of a siren and the thump of a driving techno beat slam in. The shot is a fast-paced, shaky-cam shot of a thriving, neon-lit cityscape at night, full of movement and energy.",
         "A quick, intense close-up on a model's face. Her eyes are locked on something off-camera, full of determination and fierce confidence.",
         "The camera follows a different model as she strides with purpose onto a catwalk. The runway lights are blinding, rhythmic flashes that create a dramatic, electrifying effect. The crowd's cheers roar to life.",
