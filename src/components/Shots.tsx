@@ -240,6 +240,19 @@ export default function Shots() {
       trimStart: 0,
       trimEnd: 10,
       title: "Finale"
+    },
+    {
+      id: "5",
+      coverImage: availableCoverImages[0],
+      videoUrl: "/video5.mp4",
+      references: [],
+      selected: false,
+      duration: 7,
+      startTime: 45,
+      endTime: 52,
+      trimStart: 0,
+      trimEnd: 7,
+      title: "Outro"
     }
   ])
   const [selectedShotId, setSelectedShotId] = useState<string>("1")
@@ -251,7 +264,7 @@ export default function Shots() {
   // Timeline player state
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
-  const [totalDuration, setTotalDuration] = useState(45)
+  const [totalDuration, setTotalDuration] = useState(52)
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
   const mainVideoRef = useRef<HTMLVideoElement>(null)
   const timelineRef = useRef<HTMLDivElement>(null)
@@ -280,7 +293,8 @@ export default function Shots() {
       "/video1b.mp4", 
       "/video2.mp4",
       "/video3.mp4",
-      "/video4.mp4"
+      "/video4.mp4",
+      "/video5.mp4"
     ]
     
     const newShot: Shot = {
