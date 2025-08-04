@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { X, Plus, Link2, Camera, ArrowRight, Settings, CheckCircle, Search, ChevronLeft, ChevronRight, Play, Pause } from "lucide-react"
+import { X, Plus, Link2, Camera, ArrowRight, Settings, CheckCircle, Search, ChevronLeft, ChevronRight, Play, Pause, SkipBack, SkipForward, Volume2, Maximize2, Scissors, Move, ZoomIn, ZoomOut } from "lucide-react"
 
 interface Shot {
   id: string
@@ -11,6 +11,12 @@ interface Shot {
   videoUrl?: string
   references: string[]
   selected?: boolean
+  duration: number
+  startTime: number
+  endTime: number
+  trimStart: number
+  trimEnd: number
+  title: string
 }
 
 interface TimelineBlockProps {
@@ -188,28 +194,52 @@ export default function Shots() {
       coverImage: availableCoverImages[0],
       videoUrl: "/video1a.mp4",
       references: [],
-      selected: false
+      selected: false,
+      duration: 15,
+      startTime: 0,
+      endTime: 15,
+      trimStart: 0,
+      trimEnd: 15,
+      title: "Opening Scene"
     },
     {
       id: "2", 
       coverImage: availableCoverImages[1],
       videoUrl: "/video2.mp4",
       references: [],
-      selected: false
+      selected: false,
+      duration: 12,
+      startTime: 15,
+      endTime: 27,
+      trimStart: 0,
+      trimEnd: 12,
+      title: "Main Action"
     },
     {
       id: "3",
       coverImage: availableCoverImages[2],
       videoUrl: "/video3.mp4",
       references: [],
-      selected: false
+      selected: false,
+      duration: 8,
+      startTime: 27,
+      endTime: 35,
+      trimStart: 0,
+      trimEnd: 8,
+      title: "Transition"
     },
     {
       id: "4",
       coverImage: availableCoverImages[3],
       videoUrl: "/video4.mp4",
       references: [],
-      selected: false
+      selected: false,
+      duration: 10,
+      startTime: 35,
+      endTime: 45,
+      trimStart: 0,
+      trimEnd: 10,
+      title: "Finale"
     }
   ])
   const [selectedShotId, setSelectedShotId] = useState<string>("1")
@@ -221,14 +251,28 @@ export default function Shots() {
   // Timeline player state
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
-  const [totalDuration, setTotalDuration] = useState(0)
+  const [totalDuration, setTotalDuration] = useState(45)
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
   const mainVideoRef = useRef<HTMLVideoElement>(null)
-  const [videoDurations, setVideoDurations] = useState<number[]>([])
-  const [videoSegments, setVideoSegments] = useState<Array<{start: number, end: number, shotId: string}>>([])
+  const timelineRef = useRef<HTMLDivElement>(null)
   
-  // Assume each video segment is 10 seconds for demo purposes
-  const SEGMENT_DURATION = 10
+  // Advanced timeline state
+  const [timelineZoom, setTimelineZoom] = useState(1)
+  const [timelineScroll, setTimelineScroll] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const [draggedClip, setDraggedClip] = useState<string | null>(null)
+  const [dragStartX, setDragStartX] = useState(0)
+  const [dragStartTime, setDragStartTime] = useState(0)
+  const [playbackRate, setPlaybackRate] = useState(1)
+  const [volume, setVolume] = useState(1)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [snapToGrid, setSnapToGrid] = useState(true)
+  const [showWaveforms, setShowWaveforms] = useState(true)
+  
+  // Timeline dimensions
+  const TIMELINE_HEIGHT = 120
+  const PIXELS_PER_SECOND = 50 * timelineZoom
+  const GRID_INTERVAL = 1 // seconds
 
   const addShot = () => {
     const videoUrls = [
@@ -244,9 +288,18 @@ export default function Shots() {
       coverImage: availableCoverImages[shots.length % availableCoverImages.length],
       videoUrl: videoUrls[shots.length % videoUrls.length],
       references: [],
-      selected: false
+      selected: false,
+      duration: 8,
+      startTime: totalDuration,
+      endTime: totalDuration + 8,
+      trimStart: 0,
+      trimEnd: 8,
+      title: `Scene ${shots.length + 1}`
     }
-    setShots(prev => [...prev, newShot])
+    setShots(prev => {
+      const updatedShots = [...prev, newShot]
+      return updatedShots
+    })
     
     setTimeout(() => {
       if (carouselRef.current) {
@@ -302,20 +355,45 @@ export default function Shots() {
 
   useEffect(() => {
     updateScrollButtons()
-    // Calculate video segments when shots change
-    const segments = shots.map((shot, index) => ({
-      start: index * SEGMENT_DURATION,
-      end: (index + 1) * SEGMENT_DURATION,
-      shotId: shot.id
-    }))
-    setVideoSegments(segments)
-    setTotalDuration(shots.length * SEGMENT_DURATION)
+    // Recalculate total duration from actual shot durations
+    const newTotalDuration = shots.reduce((total, shot) => Math.max(total, shot.endTime), 0)
+    setTotalDuration(newTotalDuration)
   }, [shots])
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100)
     return () => clearTimeout(timer)
   }, [])
+
+  // Timeline utility functions
+  const timeToPixels = (time: number) => time * PIXELS_PER_SECOND
+  const pixelsToTime = (pixels: number) => pixels / PIXELS_PER_SECOND
+  const snapToGridTime = (time: number) => snapToGrid ? Math.round(time / GRID_INTERVAL) * GRID_INTERVAL : time
+  
+  const getClipAtTime = (time: number) => {
+    return shots.find(shot => time >= shot.startTime && time < shot.endTime)
+  }
+  
+  const recalculateTimeline = useCallback(() => {
+    // Sort shots by start time and recalculate positions
+    const sortedShots = [...shots].sort((a, b) => a.startTime - b.startTime)
+    
+    // Ensure no gaps or overlaps
+    let currentPos = 0
+    const updatedShots = sortedShots.map(shot => {
+      const newShot = {
+        ...shot,
+        startTime: currentPos,
+        endTime: currentPos + shot.duration
+      }
+      currentPos += shot.duration
+      return newShot
+    })
+    
+    setShots(updatedShots)
+    const newTotalDuration = updatedShots[updatedShots.length - 1]?.endTime || 0
+    setTotalDuration(newTotalDuration)
+  }, [shots])
 
   // Timeline control functions
   const togglePlayPause = () => {
@@ -324,42 +402,119 @@ export default function Shots() {
         mainVideoRef.current.pause()
       } else {
         mainVideoRef.current.play()
+        mainVideoRef.current.playbackRate = playbackRate
       }
       setIsPlaying(!isPlaying)
     }
   }
+  
+  const skipBackward = () => {
+    const newTime = Math.max(0, currentTime - 10)
+    jumpToTime(newTime)
+  }
+  
+  const skipForward = () => {
+    const newTime = Math.min(totalDuration, currentTime + 10)
+    jumpToTime(newTime)
+  }
 
   const jumpToTime = (time: number) => {
     setCurrentTime(time)
-    // Find which video segment this time belongs to
-    const segmentIndex = Math.floor(time / SEGMENT_DURATION)
-    const newVideoIndex = Math.min(segmentIndex, shots.length - 1)
+    const currentClip = getClipAtTime(time)
     
-    if (newVideoIndex !== currentVideoIndex) {
-      setCurrentVideoIndex(newVideoIndex)
-      setSelectedShotId(shots[newVideoIndex].id)
-    }
-    
-    // Set the actual video time to the offset within the segment
-    const segmentStartTime = segmentIndex * SEGMENT_DURATION
-    const videoTime = time - segmentStartTime
-    
-    if (mainVideoRef.current) {
-      mainVideoRef.current.currentTime = Math.min(videoTime, SEGMENT_DURATION)
+    if (currentClip) {
+      const clipIndex = shots.findIndex(shot => shot.id === currentClip.id)
+      if (clipIndex !== currentVideoIndex) {
+        setCurrentVideoIndex(clipIndex)
+        setSelectedShotId(currentClip.id)
+      }
+      
+      // Calculate time within the clip
+      const clipTime = time - currentClip.startTime + currentClip.trimStart
+      
+      if (mainVideoRef.current) {
+        mainVideoRef.current.currentTime = clipTime
+      }
     }
   }
+  
+  // Drag and drop functions
+  const handleClipDragStart = (e: React.MouseEvent, clipId: string) => {
+    e.preventDefault()
+    setIsDragging(true)
+    setDraggedClip(clipId)
+    setDragStartX(e.clientX)
+    
+    const clip = shots.find(shot => shot.id === clipId)
+    if (clip) {
+      setDragStartTime(clip.startTime)
+    }
+  }
+  
+  const handleClipDrag = useCallback((e: MouseEvent) => {
+    if (!isDragging || !draggedClip || !timelineRef.current) return
+    
+    const rect = timelineRef.current.getBoundingClientRect()
+    const deltaX = e.clientX - dragStartX
+    const deltaTime = pixelsToTime(deltaX)
+    const newStartTime = snapToGridTime(Math.max(0, dragStartTime + deltaTime))
+    
+    const draggedClipData = shots.find(shot => shot.id === draggedClip)
+    if (!draggedClipData) return
+    
+    const newEndTime = newStartTime + draggedClipData.duration
+    
+    // Check for overlaps with other clips
+    const otherClips = shots.filter(shot => shot.id !== draggedClip)
+    const hasOverlap = otherClips.some(clip => 
+      (newStartTime < clip.endTime && newEndTime > clip.startTime)
+    )
+    
+    // Only update if no overlap and within bounds
+    if (!hasOverlap && newStartTime >= 0 && newEndTime <= totalDuration + 60) {
+      setShots(prev => prev.map(shot => 
+        shot.id === draggedClip 
+          ? { ...shot, startTime: newStartTime, endTime: newEndTime }
+          : shot
+      ))
+    }
+  }, [isDragging, draggedClip, dragStartX, dragStartTime, shots, snapToGrid, pixelsToTime, snapToGridTime, totalDuration])
+  
+  const handleClipDragEnd = useCallback(() => {
+    setIsDragging(false)
+    setDraggedClip(null)
+    recalculateTimeline()
+  }, [])
+  
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleClipDrag)
+      document.addEventListener('mouseup', handleClipDragEnd)
+      return () => {
+        document.removeEventListener('mousemove', handleClipDrag)
+        document.removeEventListener('mouseup', handleClipDragEnd)
+      }
+    }
+  }, [isDragging, handleClipDrag, handleClipDragEnd])
 
   const handleTimeUpdate = () => {
     if (mainVideoRef.current) {
       const videoCurrentTime = mainVideoRef.current.currentTime
-      const globalTime = currentVideoIndex * SEGMENT_DURATION + videoCurrentTime
-      setCurrentTime(globalTime)
+      const currentShot = shots[currentVideoIndex]
       
-      // Auto-advance to next video if current segment is complete
-      if (videoCurrentTime >= SEGMENT_DURATION && currentVideoIndex < shots.length - 1) {
-        setCurrentVideoIndex(currentVideoIndex + 1)
-        setSelectedShotId(shots[currentVideoIndex + 1].id)
-        mainVideoRef.current.currentTime = 0
+      if (currentShot) {
+        const globalTime = currentShot.startTime + videoCurrentTime
+        setCurrentTime(Math.min(globalTime, currentShot.endTime))
+        
+        // Auto-advance to next video if current clip is complete
+        if (videoCurrentTime >= (currentShot.trimEnd - currentShot.trimStart) && currentVideoIndex < shots.length - 1) {
+          const nextIndex = currentVideoIndex + 1
+          setCurrentVideoIndex(nextIndex)
+          setSelectedShotId(shots[nextIndex].id)
+          if (mainVideoRef.current) {
+            mainVideoRef.current.currentTime = shots[nextIndex].trimStart
+          }
+        }
       }
     }
   }
@@ -406,7 +561,7 @@ export default function Shots() {
         if (shouldUpdateAll || shot.selected) {
           // Replace video1a with video1b when processing query
           const newVideoUrl = shot.videoUrl === "/video1a.mp4" ? "/video1b.mp4" : shot.videoUrl
-          return { ...shot, description: query, videoUrl: newVideoUrl }
+          return { ...shot, videoUrl: newVideoUrl }
         }
         return shot
       })
@@ -452,14 +607,24 @@ export default function Shots() {
             {shots[currentVideoIndex]?.videoUrl ? (
               <video 
                 ref={mainVideoRef}
-                key={currentVideoIndex}
+                key={`${currentVideoIndex}-${shots[currentVideoIndex]?.videoUrl}`}
                 src={shots[currentVideoIndex].videoUrl}
                 className="w-full h-full object-contain"
                 muted
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={() => {
-                  if (mainVideoRef.current) {
-                    mainVideoRef.current.currentTime = currentTime - (currentVideoIndex * SEGMENT_DURATION)
+                  if (mainVideoRef.current && shots[currentVideoIndex]) {
+                    const currentShot = shots[currentVideoIndex]
+                    const relativeTime = currentTime - currentShot.startTime
+                    mainVideoRef.current.currentTime = Math.max(0, relativeTime + currentShot.trimStart)
+                  }
+                }}
+                onEnded={() => {
+                  if (currentVideoIndex < shots.length - 1) {
+                    setCurrentVideoIndex(currentVideoIndex + 1)
+                    setSelectedShotId(shots[currentVideoIndex + 1].id)
+                  } else {
+                    setIsPlaying(false)
                   }
                 }}
               />
@@ -473,73 +638,175 @@ export default function Shots() {
             )}
           </div>
           
-          {/* Custom Timeline Controls */}
-          <div className="mt-4 space-y-4">
-            {/* Play/Pause and Scene Info */}
+          {/* Advanced Timeline Controls */}
+          <div className="mt-4 space-y-6">
+            {/* Transport Controls */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={togglePlayPause}
-                  className="flex items-center gap-2"
-                >
-                  {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                  {isPlaying ? 'Pause' : 'Play'}
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={skipBackward}>
+                  <SkipBack className="h-4 w-4" />
                 </Button>
-                <div className="text-sm text-gray-600">
-                  Scene {currentVideoIndex + 1} of {shots.length}
+                <Button variant="outline" size="sm" onClick={togglePlayPause}>
+                  {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                </Button>
+                <Button variant="outline" size="sm" onClick={skipForward}>
+                  <SkipForward className="h-4 w-4" />
+                </Button>
+                
+                <div className="mx-4 text-sm font-mono">
+                  {Math.floor(currentTime / 60)}:{String(Math.floor(currentTime % 60)).padStart(2, '0')}:{String(Math.floor((currentTime % 1) * 100)).padStart(2, '0')}
                 </div>
+                
+                <select 
+                  value={playbackRate} 
+                  onChange={(e) => setPlaybackRate(Number(e.target.value))}
+                  className="text-xs border rounded px-2 py-1"
+                >
+                  <option value={0.25}>0.25x</option>
+                  <option value={0.5}>0.5x</option>
+                  <option value={1}>1x</option>
+                  <option value={1.25}>1.25x</option>
+                  <option value={1.5}>1.5x</option>
+                  <option value={2}>2x</option>
+                </select>
               </div>
-              <div className="text-sm text-gray-500">
-                {Math.floor(currentTime)}s / {totalDuration}s
+              
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => setTimelineZoom(Math.max(0.25, timelineZoom - 0.25))}>
+                  <ZoomOut className="h-4 w-4" />
+                </Button>
+                <span className="text-xs px-2">{Math.round(timelineZoom * 100)}%</span>
+                <Button variant="outline" size="sm" onClick={() => setTimelineZoom(Math.min(4, timelineZoom + 0.25))}>
+                  <ZoomIn className="h-4 w-4" />
+                </Button>
+                
+                <Button variant="outline" size="sm" onClick={() => setSnapToGrid(!snapToGrid)} 
+                        className={snapToGrid ? 'bg-blue-100' : ''}>
+                  Grid
+                </Button>
+                
+                <Button variant="outline" size="sm" onClick={() => setIsFullscreen(!isFullscreen)}>
+                  <Maximize2 className="h-4 w-4" />
+                </Button>
               </div>
             </div>
             
-            {/* Interactive Timeline Bar */}
-            <div className="relative">
-              <div 
-                className="w-full h-8 bg-gray-200 rounded-lg cursor-pointer relative overflow-hidden"
-                onClick={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect()
-                  const clickX = e.clientX - rect.left
-                  const newTime = (clickX / rect.width) * totalDuration
-                  jumpToTime(newTime)
-                }}
-              >
-                {/* Video Segments */}
-                {videoSegments.map((segment, index) => (
-                  <div
-                    key={segment.shotId}
-                    className={`absolute top-0 h-full border-r border-white transition-colors ${
-                      index === currentVideoIndex ? 'bg-blue-500' : 'bg-gray-400 hover:bg-gray-500'
-                    }`}
-                    style={{
-                      left: `${(segment.start / totalDuration) * 100}%`,
-                      width: `${(SEGMENT_DURATION / totalDuration) * 100}%`
-                    }}
-                    title={`Scene ${index + 1}`}
-                  >
-                    <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-semibold">
-                      {index + 1}
-                    </div>
-                  </div>
-                ))}
-                
-                {/* Progress Indicator */}
-                <div 
-                  className="absolute top-0 w-1 h-full bg-red-500 transition-all duration-100"
-                  style={{ left: `${(currentTime / totalDuration) * 100}%` }}
-                />
+            {/* Professional Timeline */}
+            <div className="bg-gray-900 rounded-lg p-4">
+              {/* Timeline Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-white text-sm font-semibold">Timeline</div>
+                <div className="text-gray-400 text-xs">
+                  Duration: {Math.floor(totalDuration / 60)}:{String(Math.floor(totalDuration % 60)).padStart(2, '0')}
+                </div>
               </div>
               
-              {/* Segment Labels */}
-              <div className="flex justify-between mt-2 text-xs text-gray-500">
-                {videoSegments.map((segment, index) => (
-                  <div key={segment.shotId} className="flex-1 text-center">
-                    Scene {index + 1}
+              {/* Scrollable Timeline Container */}
+              <div className="overflow-x-auto overflow-y-hidden" style={{ maxWidth: '100%' }}>
+                <div className="relative" style={{ width: `${Math.max(800, timeToPixels(totalDuration + 10))}px` }}>
+                  {/* Time Ruler */}
+                  <div className="relative mb-2 h-8 bg-gray-800">
+                    {Array.from({ length: Math.ceil((totalDuration + 10) / GRID_INTERVAL) + 1 }, (_, i) => (
+                      <div
+                        key={i}
+                        className="absolute top-0 h-full border-l border-gray-600"
+                        style={{ left: `${timeToPixels(i * GRID_INTERVAL)}px` }}
+                      >
+                        {i % 5 === 0 && (
+                          <div className="text-xs text-gray-400 mt-1 ml-1">
+                            {i * GRID_INTERVAL}s
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    
+                    {/* Playhead */}
+                    <div 
+                      className="absolute top-0 w-0.5 bg-red-500 z-30 pointer-events-none"
+                      style={{ 
+                        left: `${timeToPixels(currentTime)}px`,
+                        height: `${TIMELINE_HEIGHT + 32}px`
+                      }}
+                    >
+                      <div className="absolute -top-1 -left-1.5 w-3 h-3 bg-red-500 transform rotate-45"></div>
+                    </div>
                   </div>
-                ))}
+                  
+                  {/* Video Track */}
+                  <div 
+                    ref={timelineRef}
+                    className="relative bg-gray-800 rounded cursor-pointer"
+                    style={{ height: `${TIMELINE_HEIGHT}px` }}
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect()
+                      const clickX = e.clientX - rect.left
+                      const newTime = pixelsToTime(clickX)
+                      jumpToTime(newTime)
+                    }}
+                  >
+                    {/* Video Clips */}
+                    {shots.map((shot, index) => (
+                      <div
+                        key={shot.id}
+                        className={`absolute top-2 rounded-md border-2 cursor-move transition-all select-none ${
+                          draggedClip === shot.id 
+                            ? 'border-blue-400 shadow-lg z-20 opacity-80' 
+                            : 'border-gray-600 hover:border-gray-400'
+                        } ${
+                          shots[currentVideoIndex]?.id === shot.id 
+                            ? 'bg-blue-600' 
+                            : 'bg-gradient-to-r from-purple-600 to-indigo-600'
+                        }`}
+                        style={{
+                          left: `${timeToPixels(shot.startTime)}px`,
+                          width: `${Math.max(timeToPixels(shot.duration), 60)}px`,
+                          height: `${TIMELINE_HEIGHT - 16}px`
+                        }}
+                        onMouseDown={(e) => handleClipDragStart(e, shot.id)}
+                        title={`${shot.title} - ${shot.duration}s`}
+                      >
+                        {/* Clip Content */}
+                        <div className="h-full p-2 flex flex-col justify-between text-white text-xs pointer-events-none">
+                          <div className="font-semibold truncate">{shot.title}</div>
+                          <div className="flex items-center gap-1">
+                            <Move className="h-3 w-3" />
+                            <span>{shot.duration}s</span>
+                          </div>
+                        </div>
+                        
+                        {/* Clip Handles for Trimming */}
+                        <div className="absolute left-0 top-0 w-2 h-full bg-yellow-400 opacity-0 hover:opacity-70 cursor-ew-resize" 
+                             title="Trim start" />
+                        <div className="absolute right-0 top-0 w-2 h-full bg-yellow-400 opacity-0 hover:opacity-70 cursor-ew-resize" 
+                             title="Trim end" />
+                      </div>
+                    ))}
+                    
+                    {/* Grid Lines */}
+                    <div className="absolute inset-0 pointer-events-none">
+                      {Array.from({ length: Math.ceil((totalDuration + 10) / GRID_INTERVAL) }, (_, i) => (
+                        <div
+                          key={i}
+                          className="absolute top-0 h-full border-l border-gray-700 opacity-20"
+                          style={{ left: `${timeToPixels(i * GRID_INTERVAL)}px` }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Timeline Info */}
+              <div className="mt-4 flex justify-between text-xs text-gray-400">
+                <div>Track 1: Video</div>
+                <div className="flex items-center gap-4">
+                  <span>Clips: {shots.length}</span>
+                  <span>Zoom: {Math.round(timelineZoom * 100)}%</span>
+                  <span className={snapToGrid ? 'text-blue-400' : ''}>
+                    Snap: {snapToGrid ? 'ON' : 'OFF'}
+                  </span>
+                  <span>Duration: {totalDuration}s</span>
+                </div>
               </div>
             </div>
           </div>
