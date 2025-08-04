@@ -3,11 +3,12 @@
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { X, Plus, Link2, Camera, ArrowRight, Settings, CheckCircle, Search, ChevronLeft, ChevronRight } from "lucide-react"
+import { X, Plus, Link2, Camera, ArrowRight, Settings, CheckCircle, Search, ChevronLeft, ChevronRight, Play, Pause } from "lucide-react"
 
 interface Shot {
   id: string
   coverImage: string
+  videoUrl?: string
   references: string[]
   selected?: boolean
 }
@@ -21,9 +22,12 @@ interface TimelineBlockProps {
   onSelect: (id: string) => void
   onToolset: (id: string) => void
   disabled: boolean
+  shots: Shot[]
+  currentVideoIndex: number
+  isPlaying: boolean
 }
 
-function TimelineBlock({ shot, index, isLast, onUpdate, onRemove, onSelect, onToolset, disabled }: TimelineBlockProps) {
+function TimelineBlock({ shot, index, isLast, onUpdate, onRemove, onSelect, onToolset, disabled, shots, currentVideoIndex, isPlaying }: TimelineBlockProps) {
   const getBlockWidth = () => {
     const baseWidth = 280
     const contentLength = shot.references.length * 15
@@ -39,14 +43,20 @@ function TimelineBlock({ shot, index, isLast, onUpdate, onRemove, onSelect, onTo
   return (
     <div className="relative flex items-center">
       <Card 
-        className={`border-l-4 ${getSelectionStyle(shot.selected)} transition-all duration-300 shadow-lg hover:shadow-xl flex-shrink-0`}
+        className={`border-l-4 ${getSelectionStyle(shot.selected)} transition-all duration-300 shadow-lg hover:shadow-xl flex-shrink-0 ${
+          shots[currentVideoIndex]?.id === shot.id ? 'ring-2 ring-blue-400 border-blue-500' : ''
+        }`}
         style={{ width: `${getBlockWidth()}px` }}
       >
         <CardHeader className="pb-3">
           <div className="space-y-2">
             <CardTitle className="text-lg flex items-center">
-              <div className={`w-8 h-8 ${shot.selected ? 'bg-green-600' : 'bg-indigo-600'} text-white rounded-full flex items-center justify-center text-sm font-bold mr-3`}>
-                {shot.selected ? <CheckCircle className="h-4 w-4" /> : index + 1}
+              <div className={`w-8 h-8 ${
+                shots[currentVideoIndex]?.id === shot.id ? 'bg-blue-600' :
+                shot.selected ? 'bg-green-600' : 'bg-indigo-600'
+              } text-white rounded-full flex items-center justify-center text-sm font-bold mr-3`}>
+                {shots[currentVideoIndex]?.id === shot.id && isPlaying ? <Play className="h-4 w-4" /> :
+                 shot.selected ? <CheckCircle className="h-4 w-4" /> : index + 1}
               </div>
               <div className="flex flex-col">
                 <span>Scene {index + 1}</span>
@@ -88,42 +98,26 @@ function TimelineBlock({ shot, index, isLast, onUpdate, onRemove, onSelect, onTo
         <CardContent className="space-y-2">
           <div>
             <div className="relative group">
-              <div className="w-full h-28 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">
-                {shot.coverImage ? (
-                  <img 
-                    src={shot.coverImage} 
-                    alt={`Scene ${index + 1}`}
+              <div 
+                className="w-full h-28 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                onClick={() => onSelect(shot.id)}
+              >
+                {shot.videoUrl ? (
+                  <video 
+                    src={shot.videoUrl} 
                     className="w-full h-full object-cover rounded-lg"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none'
-                      const nextEl = e.currentTarget.nextElementSibling as HTMLElement
-                      if (nextEl) nextEl.style.display = 'flex'
-                    }}
+                    muted
+                    loop
+                    onMouseEnter={(e) => e.currentTarget.play()}
+                    onMouseLeave={(e) => e.currentTarget.pause()}
                   />
                 ) : (
                   <div className="text-center">
                     <Camera className="h-6 w-6 mx-auto mb-1 text-gray-400" />
-                    <span className="text-xs text-gray-500">Add image</span>
-                  </div>
-                )}
-                {shot.coverImage && (
-                  <div className="hidden absolute inset-0 items-center justify-center bg-gray-200 rounded-lg">
-                    <Camera className="h-6 w-6 text-gray-400" />
+                    <span className="text-xs text-gray-500">Add video</span>
                   </div>
                 )}
               </div>
-              <input 
-                type="file"
-                accept="image/*"
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                onChange={(e) => {
-                  const file = e.target.files?.[0]
-                  if (file) {
-                    const url = URL.createObjectURL(file)
-                    onUpdate(shot.id, 'coverImage', url)
-                  }
-                }}
-              />
             </div>
           </div>
 
@@ -192,38 +186,63 @@ export default function Shots() {
     {
       id: "1",
       coverImage: availableCoverImages[0],
+      videoUrl: "/video1a.mp4",
       references: [],
       selected: false
     },
     {
-      id: "2",
+      id: "2", 
       coverImage: availableCoverImages[1],
+      videoUrl: "/video2.mp4",
       references: [],
       selected: false
     },
     {
       id: "3",
       coverImage: availableCoverImages[2],
+      videoUrl: "/video3.mp4",
       references: [],
       selected: false
     },
     {
       id: "4",
       coverImage: availableCoverImages[3],
+      videoUrl: "/video4.mp4",
       references: [],
       selected: false
     }
   ])
+  const [selectedShotId, setSelectedShotId] = useState<string>("1")
   const [scrollPosition, setScrollPosition] = useState(0)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
   const carouselRef = useRef<HTMLDivElement>(null)
+  
+  // Timeline player state
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [totalDuration, setTotalDuration] = useState(0)
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
+  const mainVideoRef = useRef<HTMLVideoElement>(null)
+  const [videoDurations, setVideoDurations] = useState<number[]>([])
+  const [videoSegments, setVideoSegments] = useState<Array<{start: number, end: number, shotId: string}>>([])
+  
+  // Assume each video segment is 10 seconds for demo purposes
+  const SEGMENT_DURATION = 10
 
   const addShot = () => {
+    const videoUrls = [
+      "/video1a.mp4",
+      "/video1b.mp4", 
+      "/video2.mp4",
+      "/video3.mp4",
+      "/video4.mp4"
+    ]
+    
     const newShot: Shot = {
       id: Date.now().toString(),
-      // Cycle through available images based on shot count
       coverImage: availableCoverImages[shots.length % availableCoverImages.length],
+      videoUrl: videoUrls[shots.length % videoUrls.length],
       references: [],
       selected: false
     }
@@ -248,6 +267,14 @@ export default function Shots() {
   }
 
   const selectShot = (id: string) => {
+    const shotIndex = shots.findIndex(shot => shot.id === id)
+    if (shotIndex !== -1) {
+      setSelectedShotId(id)
+      setCurrentVideoIndex(shotIndex)
+      // Jump to the start of this video segment
+      const segmentStartTime = shotIndex * SEGMENT_DURATION
+      jumpToTime(segmentStartTime)
+    }
     setShots(prev =>
       prev.map(shot => 
         shot.id === id ? { ...shot, selected: !shot.selected } : shot
@@ -275,12 +302,67 @@ export default function Shots() {
 
   useEffect(() => {
     updateScrollButtons()
+    // Calculate video segments when shots change
+    const segments = shots.map((shot, index) => ({
+      start: index * SEGMENT_DURATION,
+      end: (index + 1) * SEGMENT_DURATION,
+      shotId: shot.id
+    }))
+    setVideoSegments(segments)
+    setTotalDuration(shots.length * SEGMENT_DURATION)
   }, [shots])
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100)
     return () => clearTimeout(timer)
   }, [])
+
+  // Timeline control functions
+  const togglePlayPause = () => {
+    if (mainVideoRef.current) {
+      if (isPlaying) {
+        mainVideoRef.current.pause()
+      } else {
+        mainVideoRef.current.play()
+      }
+      setIsPlaying(!isPlaying)
+    }
+  }
+
+  const jumpToTime = (time: number) => {
+    setCurrentTime(time)
+    // Find which video segment this time belongs to
+    const segmentIndex = Math.floor(time / SEGMENT_DURATION)
+    const newVideoIndex = Math.min(segmentIndex, shots.length - 1)
+    
+    if (newVideoIndex !== currentVideoIndex) {
+      setCurrentVideoIndex(newVideoIndex)
+      setSelectedShotId(shots[newVideoIndex].id)
+    }
+    
+    // Set the actual video time to the offset within the segment
+    const segmentStartTime = segmentIndex * SEGMENT_DURATION
+    const videoTime = time - segmentStartTime
+    
+    if (mainVideoRef.current) {
+      mainVideoRef.current.currentTime = Math.min(videoTime, SEGMENT_DURATION)
+    }
+  }
+
+  const handleTimeUpdate = () => {
+    if (mainVideoRef.current) {
+      const videoCurrentTime = mainVideoRef.current.currentTime
+      const globalTime = currentVideoIndex * SEGMENT_DURATION + videoCurrentTime
+      setCurrentTime(globalTime)
+      
+      // Auto-advance to next video if current segment is complete
+      if (videoCurrentTime >= SEGMENT_DURATION && currentVideoIndex < shots.length - 1) {
+        setCurrentVideoIndex(currentVideoIndex + 1)
+        setSelectedShotId(shots[currentVideoIndex + 1].id)
+        mainVideoRef.current.currentTime = 0
+      }
+    }
+  }
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -362,6 +444,105 @@ export default function Shots() {
         </div>
       </CardHeader>
       <CardContent>
+        {/* Timeline Video Player */}
+        <div className="mb-8">
+          <div className="relative w-full h-96 bg-black rounded-lg overflow-hidden border-2 border-gray-300">
+            {shots[currentVideoIndex]?.videoUrl ? (
+              <video 
+                ref={mainVideoRef}
+                key={currentVideoIndex}
+                src={shots[currentVideoIndex].videoUrl}
+                className="w-full h-full object-contain"
+                muted
+                onTimeUpdate={handleTimeUpdate}
+                onLoadedMetadata={() => {
+                  if (mainVideoRef.current) {
+                    mainVideoRef.current.currentTime = currentTime - (currentVideoIndex * SEGMENT_DURATION)
+                  }
+                }}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-400">
+                <div className="text-center">
+                  <Camera className="h-16 w-16 mx-auto mb-4" />
+                  <p className="text-lg">No video available</p>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Custom Timeline Controls */}
+          <div className="mt-4 space-y-4">
+            {/* Play/Pause and Scene Info */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={togglePlayPause}
+                  className="flex items-center gap-2"
+                >
+                  {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                  {isPlaying ? 'Pause' : 'Play'}
+                </Button>
+                <div className="text-sm text-gray-600">
+                  Scene {currentVideoIndex + 1} of {shots.length}
+                </div>
+              </div>
+              <div className="text-sm text-gray-500">
+                {Math.floor(currentTime)}s / {totalDuration}s
+              </div>
+            </div>
+            
+            {/* Interactive Timeline Bar */}
+            <div className="relative">
+              <div 
+                className="w-full h-8 bg-gray-200 rounded-lg cursor-pointer relative overflow-hidden"
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect()
+                  const clickX = e.clientX - rect.left
+                  const newTime = (clickX / rect.width) * totalDuration
+                  jumpToTime(newTime)
+                }}
+              >
+                {/* Video Segments */}
+                {videoSegments.map((segment, index) => (
+                  <div
+                    key={segment.shotId}
+                    className={`absolute top-0 h-full border-r border-white transition-colors ${
+                      index === currentVideoIndex ? 'bg-blue-500' : 'bg-gray-400 hover:bg-gray-500'
+                    }`}
+                    style={{
+                      left: `${(segment.start / totalDuration) * 100}%`,
+                      width: `${(SEGMENT_DURATION / totalDuration) * 100}%`
+                    }}
+                    title={`Scene ${index + 1}`}
+                  >
+                    <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-semibold">
+                      {index + 1}
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Progress Indicator */}
+                <div 
+                  className="absolute top-0 w-1 h-full bg-red-500 transition-all duration-100"
+                  style={{ left: `${(currentTime / totalDuration) * 100}%` }}
+                />
+              </div>
+              
+              {/* Segment Labels */}
+              <div className="flex justify-between mt-2 text-xs text-gray-500">
+                {videoSegments.map((segment, index) => (
+                  <div key={segment.shotId} className="flex-1 text-center">
+                    Scene {index + 1}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div className="relative">
           <div className="flex items-center gap-4 mb-6">
             <Button
@@ -418,6 +599,9 @@ export default function Shots() {
                   onSelect={selectShot}
                   onToolset={handleToolset}
                   disabled={shots.length === 1}
+                  shots={shots}
+                  currentVideoIndex={currentVideoIndex}
+                  isPlaying={isPlaying}
                 />
               </div>
             ))}
