@@ -82,6 +82,8 @@ export default function TextShots() {
   const [scrollPosition, setScrollPosition] = useState(0)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
+  const [query, setQuery] = useState('')
+  const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100)
@@ -176,6 +178,26 @@ export default function TextShots() {
     setScrollPosition(newScrollPosition)
     setCanScrollLeft(newScrollPosition > 0)
     setCanScrollRight(newScrollPosition < container.scrollWidth - container.clientWidth)
+  }
+
+  const handleQueryGo = () => {
+    if (!query.trim()) return
+    
+    setIsProcessing(true)
+    
+    setTimeout(() => {
+      // Update all text shots with the query content
+      const updatedShots = textShots.map(shot => ({
+        ...shot,
+        content: query
+      }))
+      setTextShots(updatedShots)
+      updateTextShots(updatedShots)
+      
+      // Clear the query
+      setQuery('')
+      setIsProcessing(false)
+    }, 2000)
   }
 
   return (
@@ -334,17 +356,38 @@ export default function TextShots() {
 
         </div>
 
-        <div className="mb-6 p-4 border rounded-lg bg-gray-50">
-          <label className="block text-sm font-medium mb-2">Query</label>
-          <div className="flex gap-2">
-            <input
-                type="text"
-                placeholder="Enter your query..."
-                className="flex-1 p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        {isProcessing && (
+          <div className="mb-6 flex items-center justify-center h-32 bg-white border rounded-lg">
+            <img 
+              src="/spinning-logo.gif" 
+              alt="Processing..." 
+              className="w-12 h-12"
             />
-            <Button className="px-4">Go</Button>
+            <span className="ml-3 text-sm text-gray-600">Processing query...</span>
           </div>
-        </div>
+        )}
+        
+        {!isProcessing && (
+          <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+            <label className="block text-sm font-medium mb-2">Query</label>
+            <div className="flex gap-2">
+              <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Enter your query..."
+                  className="flex-1 p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              <Button 
+                className="px-4" 
+                onClick={handleQueryGo}
+                disabled={!query.trim()}
+              >
+                Go
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
   )
 }

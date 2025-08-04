@@ -283,9 +283,35 @@ export default function Shots() {
     return shots.reduce((total, shot) => total + shot.references.length, 0)
   }
 
+  const handleQueryGo = () => {
+    if (!query.trim()) return
+    
+    setIsProcessing(true)
+    
+    setTimeout(() => {
+      // Update selected shots or all shots if none selected
+      const selectedShots = shots.filter(shot => shot.selected)
+      const shouldUpdateAll = selectedShots.length === 0
+      
+      const updatedShots = shots.map(shot => {
+        if (shouldUpdateAll || shot.selected) {
+          return { ...shot, description: query }
+        }
+        return shot
+      })
+      
+      setShots(updatedShots)
+      
+      // Clear the query
+      setQuery('')
+      setIsProcessing(false)
+    }, 2000)
+  }
+
   const selectedCount = getSelectedCount()
   const totalRefs = getTotalReferences()
   const [query, setQuery] = useState('')
+  const [isProcessing, setIsProcessing] = useState(false)
 
   return (
     <Card className="w-full">
@@ -385,8 +411,21 @@ export default function Shots() {
           </div>
         </div>
         
+        {/* Processing State */}
+        {isProcessing && (
+          <div className="mt-8 flex items-center justify-center h-32 bg-white border-2 border-dashed border-gray-300 rounded-lg">
+            <img 
+              src="/spinning-logo.gif" 
+              alt="Processing..." 
+              className="w-12 h-12"
+            />
+            <span className="ml-3 text-sm text-gray-600">Processing query...</span>
+          </div>
+        )}
+
         {/* Query/Prompt Component */}
-        <div className="mt-8 p-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+        {!isProcessing && (
+          <div className="mt-8 p-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
           <div className="flex items-center gap-3 mb-4">
             <Search className="h-5 w-5 text-gray-600" />
             <h3 className="text-lg font-semibold text-gray-800">Query & Prompt</h3>
@@ -411,13 +450,14 @@ export default function Shots() {
                 <Button variant="outline" size="sm" onClick={() => setQuery('')}>
                   Clear
                 </Button>
-                <Button size="sm" disabled={!query.trim()}>
+                <Button size="sm" disabled={!query.trim()} onClick={handleQueryGo}>
                   Apply Query
                 </Button>
               </div>
             </div>
           </div>
-        </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   )
