@@ -186,10 +186,12 @@ export default function TextShots() {
     setIsProcessing(true)
     
     setTimeout(() => {
+      let tmp_update_content = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"]
+
       // Update all text shots with the query content
-      const updatedShots = textShots.map(shot => ({
+      const updatedShots = textShots.map((shot, idx) => ({
         ...shot,
-        content: query
+        content: tmp_update_content[idx]
       }))
       setTextShots(updatedShots)
       updateTextShots(updatedShots)
