@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { GripVertical, ArrowLeft, ArrowRight, X, Plus, ChevronLeft, ChevronRight, Image, FileText, Link2 } from "lucide-react"
@@ -14,11 +14,68 @@ interface TextShot {
 
 export default function TextShots() {
   const { data, updateTextShots } = useWorkflow()
+  const [isVisible, setIsVisible] = useState(false)
+  
   const [textShots, setTextShots] = useState<TextShot[]>(
     data.textShots?.length > 0 ? data.textShots : [
       {
         id: "1",
-        content: "",
+        content: "Slow-motion, cinematic b-roll of nature. Think misty mountains, a tranquil lake at sunrise, or a serene forest. The focus is on the beauty and peace of the natural world.",
+        referencedAssets: []
+      },
+      {
+        id: "2",
+        content: "A close-up, slow pan over the subtle textures of the jacket fabric. You can see the intricate weaving and quality stitching. The lighting is soft and natural.",
+        referencedAssets: []
+      },
+      {
+        id: "3",
+        content: "A slow, sweeping shot of a model from behind, standing on a cliff overlooking a vast landscape. The wind gently blows the jacket. The feeling is one of contemplation and solitude.",
+        referencedAssets: []
+      },
+      {
+        id: "4",
+        content: "A quick, jarring cut from the serene landscape to a pulsating, energetic scene. The sound of a runway show begins to fade in. The shot is a fast-paced, shaky-cam shot of a bustling backstage.",
+        referencedAssets: []
+      },
+      {
+        id: "5",
+        content: "A quick close-up on a model's face as she gets the final touch-ups of her makeup, her eyes focused and intense.",
+        referencedAssets: []
+      },
+      {
+        id: "6",
+        content: "The camera follows a different model as she walks onto the runway. The runway lights are bright and dramatic.",
+        referencedAssets: []
+      },
+      {
+        id: "7",
+        content: "A series of fast-paced, high-energy runway shots. Models of different backgrounds and body types confidently walk the runway, showing off various jackets from the new line.",
+        referencedAssets: []
+      },
+      {
+        id: "8",
+        content: "Close-ups of the jackets in motion. We see how the fabric drapes and moves, the intricate details, and the unique cuts. The lighting is sharp and highlights the jacket's silhouette.",
+        referencedAssets: []
+      },
+      {
+        id: "9",
+        content: "A shot of the jackets styled in various ways—paired with elegant evening wear, casual street clothes, and work attire. This demonstrates the versatility of the jackets.",
+        referencedAssets: []
+      },
+      {
+        id: "10",
+        content: "A final, powerful shot of a model walking towards the camera. She stops, looks directly into the lens, and smiles. The music starts to fade out.",
+        referencedAssets: []
+      },
+      {
+        id: "11",
+        content: "The brand's logo appears on a black screen. A website or social media handle is included beneath it.",
+        referencedAssets: []
+      },
+      {
+        id: "12",
+        content: "The screen slowly fades to black.",
         referencedAssets: []
       }
     ]
@@ -26,6 +83,13 @@ export default function TextShots() {
   const [scrollPosition, setScrollPosition] = useState(0)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
+  const [query, setQuery] = useState('')
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 100)
+    return () => clearTimeout(timer)
+  }, [])
 
   const addTextShot = () => {
     const newTextShot: TextShot = {
@@ -117,6 +181,41 @@ export default function TextShots() {
     setCanScrollRight(newScrollPosition < container.scrollWidth - container.clientWidth)
   }
 
+  const handleQueryGo = () => {
+    if (!query.trim()) return
+    
+    setIsProcessing(true)
+    
+    setTimeout(() => {
+      let tmp_update_content = [
+        "A wide shot of a chaotic informal office space. Insert a clothing rank in the background. Desks are overflowing with papers and empty coffee cups. People bustle around. Distracted film crew can be seen in background. Monitors glow, illuminating tired faces. Anna\\\\\\'s desk is particularly messy, piled high with printouts and half-eaten snacks. The overall impression is one of overwhelming disarray. Anna is visibly agitated and stressed. She appears grizzled.",
+        "Continue from previous scene, with the lone harried marketind director in the middle. She appears tired and begins falling asleep",
+        "Same setting, but now it is night time: Computer terminal illuminates the woman's face. Woman slowly wakes up.",
+        "A sudden, jarring cut from the rooftop to a pulsating, high-energy scene. The blare of a siren and the thump of a driving techno beat slam in. The shot is a fast-paced, shaky-cam shot of a thriving, neon-lit cityscape at night, full of movement and energy.",
+        "A quick, intense close-up on a model's face. Her eyes are locked on something off-camera, full of determination and fierce confidence.",
+        "The camera follows a different model as she strides with purpose onto a catwalk. The runway lights are blinding, rhythmic flashes that create a dramatic, electrifying effect. The crowd's cheers roar to life.",
+        "A series of dynamic, high-impact runway shots. Models of different backgrounds and body types strut with unshakeable confidence and attitude. The camera cuts are rapid, highlighting the various jackets from the new line.",
+        "Aggressive, close-up shots of the jackets in motion. We see how the fabric snaps and ripples with every step. The unique cuts and intricate details are highlighted by sharp, dramatic lighting.",
+        "A fast-cut montage of the jackets styled in unexpected, bold ways—paired with gritty street clothes, edgy evening wear, and futuristic athleisure.",
+        "A final, powerful and unwavering shot of a model walking towards the camera. She stops abruptly, looks directly into the lens, and gives a sultry, confident smirk. The music fades into a deep, echoing bassline.",
+        "The brand's logo appears on a black screen, with the bassline finally cutting out. A website or social media handle is included beneath it.",
+        "The screen snaps to black, leaving the viewer in a moment of silence to process the energy they just experienced."
+      ]
+
+      // Update all text shots with the query content
+      const updatedShots = textShots.map((shot, idx) => ({
+        ...shot,
+        content: tmp_update_content[idx]
+      }))
+      setTextShots(updatedShots)
+      updateTextShots(updatedShots)
+      
+      // Clear the query
+      setQuery('')
+      setIsProcessing(false)
+    }, 2000)
+  }
+
   return (
       <div className="w-full">
         <h2 className="text-xl font-bold mb-4">Text Blocks</h2>
@@ -151,7 +250,10 @@ export default function TextShots() {
         >
           {textShots.map((textShot, index) => (
               <div key={textShot.id}
-                   className="min-w-[400px] border-2 border-blue-200 rounded-lg p-4 flex-shrink-0 bg-blue-50 shadow-sm">
+                   className={`min-w-[400px] border-2 border-blue-200 rounded-lg p-4 flex-shrink-0 bg-blue-50 shadow-sm transition-all duration-500 transform ${
+                     isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+                   }`}
+                   style={{ transitionDelay: `${index * 150}ms` }}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <div
@@ -205,14 +307,19 @@ export default function TextShots() {
                           }
                           e.target.value = ""
                         }}
-                        className="text-xs border border-blue-300 rounded px-2 py-1 bg-white"
+                        className="text-xs border border-blue-300 rounded px-2 py-1 bg-white max-w-32"
+                        disabled={data.metaPrompt.objs.length === 0}
                     >
-                      <option value="">Add asset...</option>
-                      {data.metaPrompt.objs.map(obj => (
+                      <option value="">{data.metaPrompt.objs.length === 0 ? 'No assets available' : 'Add asset...'}</option>
+                      {data.metaPrompt.objs.map(obj => {
+                        const displayName = obj.description || `Object ${obj.id}`
+                        const truncatedName = displayName.length > 15 ? displayName.substring(0, 15) + '...' : displayName
+                        return (
                           <option key={obj.id} value={obj.id}>
-                            {obj.description || `Object ${obj.id}`}
+                            {truncatedName} ({obj.uploadedFiles.length})
                           </option>
-                      ))}
+                        )
+                      })}
                     </select>
                   </div>
 
@@ -221,12 +328,20 @@ export default function TextShots() {
                       const asset = data.metaPrompt.objs.find(obj => obj.id === assetId)
                       return (
                           <div key={assetId}
-                               className="flex items-center gap-1 bg-blue-100 border border-blue-200 rounded px-2 py-1 text-xs">
+                               className="flex items-center gap-1 bg-blue-100 border border-blue-200 rounded px-2 py-1 text-xs group hover:bg-blue-200 transition-colors">
                             <Image className="h-3 w-3 text-blue-600"/>
-                            <span className="text-blue-800">{asset?.description || `Asset ${assetId}`}</span>
+                            <div className="flex flex-col">
+                              <span className="text-blue-800 font-medium">{asset?.description || `Asset ${assetId}`}</span>
+                              {asset && asset.uploadedFiles.length > 0 && (
+                                <span className="text-blue-600 text-[10px]">
+                                  {asset.uploadedFiles.length} file{asset.uploadedFiles.length !== 1 ? 's' : ''}: {asset.uploadedFiles.map(f => f.file.name).join(', ')}
+                                </span>
+                              )}
+                            </div>
                             <button
                                 onClick={() => removeAssetReference(textShot.id, assetId)}
-                                className="ml-1 text-red-500 hover:text-red-700"
+                                className="ml-1 text-red-500 hover:text-red-700 opacity-70 group-hover:opacity-100 transition-opacity"
+                                title="Remove asset reference"
                             >
                               <X className="h-3 w-3"/>
                             </button>
@@ -234,7 +349,11 @@ export default function TextShots() {
                       )
                     })}
                     {textShot.referencedAssets.length === 0 && (
-                        <div className="text-xs text-gray-500 py-2">No assets referenced</div>
+                        <div className="text-xs text-gray-500 py-2 italic">
+                          {data.metaPrompt.objs.length === 0 
+                            ? 'No assets uploaded in Meta Prompt step' 
+                            : 'No assets referenced'}
+                        </div>
                     )}
                   </div>
                 </div>
@@ -253,17 +372,38 @@ export default function TextShots() {
 
         </div>
 
-        <div className="mb-6 p-4 border rounded-lg bg-gray-50">
-          <label className="block text-sm font-medium mb-2">Query</label>
-          <div className="flex gap-2">
-            <input
-                type="text"
-                placeholder="Enter your query..."
-                className="flex-1 p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        {isProcessing && (
+          <div className="mb-6 flex items-center justify-center h-32 bg-white border rounded-lg">
+            <img 
+              src="/spinning-logo.gif" 
+              alt="Processing..." 
+              className="w-12 h-12"
             />
-            <Button className="px-4">Go</Button>
+            <span className="ml-3 text-sm text-gray-600">Processing query...</span>
           </div>
-        </div>
+        )}
+        
+        {!isProcessing && (
+          <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+            <label className="block text-sm font-medium mb-2">Query</label>
+            <div className="flex gap-2">
+              <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Enter your query..."
+                  className="flex-1 p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              <Button 
+                className="px-4" 
+                onClick={handleQueryGo}
+                disabled={!query.trim()}
+              >
+                Go
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
   )
 }

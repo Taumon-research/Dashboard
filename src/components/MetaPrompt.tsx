@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Upload, X, Plus } from "lucide-react"
+import { useWorkflow } from "@/contexts/WorkflowContext"
 
 interface UploadedFile {
   file: File
@@ -18,8 +19,15 @@ interface OBJ {
 }
 
 export default function MetaPrompt() {
-  const [prompt, setPrompt] = useState("")
-  const [objs, setObjs] = useState<OBJ[]>([])
+  const { data, updateMetaPrompt } = useWorkflow()
+  const [prompt, setPrompt] = useState(data.metaPrompt.generalPrompt)
+  const [objs, setObjs] = useState<OBJ[]>(data.metaPrompt.objs)
+  const [dragOver, setDragOver] = useState<string | null>(null)
+
+  // Update workflow context whenever prompt or objs change
+  useEffect(() => {
+    updateMetaPrompt(prompt, objs)
+  }, [prompt, objs, updateMetaPrompt])
 
   const addOBJ = () => {
     setObjs(prev => [...prev, {
@@ -74,10 +82,45 @@ export default function MetaPrompt() {
     ))
   }
 
+  const handleDragOver = (e: React.DragEvent, objId: string) => {
+    e.preventDefault()
+    setDragOver(objId)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    setDragOver(null)
+  }
+
+  const handleDrop = (e: React.DragEvent, objId: string) => {
+    e.preventDefault()
+    setDragOver(null)
+    
+    const files = Array.from(e.dataTransfer.files)
+    const allowedTypes = ['.pdf', '.doc', '.docx', '.txt', '.jpg', '.jpeg', '.png', '.mp3', '.mp4', '.wav']
+    
+    const validFiles = files.filter(file => {
+      const extension = '.' + file.name.split('.').pop()?.toLowerCase()
+      return allowedTypes.includes(extension)
+    })
+
+    if (validFiles.length > 0) {
+      const newFiles = validFiles.map(file => ({
+        file,
+        description: ""
+      }))
+      setObjs(prev => prev.map(obj => 
+        obj.id === objId 
+          ? { ...obj, uploadedFiles: [...obj.uploadedFiles, ...newFiles] }
+          : obj
+      ))
+    }
+  }
+
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">MetaPrompt</CardTitle>
+        <CardTitle className="text-2xl font-bold">Meta</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
@@ -91,13 +134,20 @@ export default function MetaPrompt() {
         </div>
 
         <div className="space-y-4">
+          <div className="flex justify-between items-left">
+            <Button onClick={addOBJ} variant="outline">
+              <Plus className="h-4 w-4 mr-2" />
+              Add OBJ
+            </Button>
+          </div>
+          
           {objs.map((obj, objIndex) => (
             <Card key={obj.id} className="border-dashed border-2 border-gray-300">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg flex items-center">
                     <Plus className="h-5 w-5 mr-2" />
-                    <span>OBJ {objIndex + 1}</span>
+                    <span>Object {objIndex + 1}</span>
                   </CardTitle>
                   <Button
                     variant="ghost"
@@ -112,7 +162,20 @@ export default function MetaPrompt() {
               <CardContent className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Upload Content</label>
-                  <div className="flex items-center gap-4">
+                  <div 
+                    className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                      dragOver === obj.id 
+                        ? 'border-indigo-500 bg-indigo-50' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                    onDragOver={(e) => handleDragOver(e, obj.id)}
+                    onDragLeave={handleDragLeave}
+                    onDrop={(e) => handleDrop(e, obj.id)}
+                  >
+                    <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                    <p className="text-sm text-gray-600 mb-2">
+                      Drag and drop your files here, or click to browse
+                    </p>
                     <Button variant="outline" className="relative">
                       <Upload className="h-4 w-4 mr-2" />
                       Upload Files
@@ -121,10 +184,13 @@ export default function MetaPrompt() {
                         multiple
                         onChange={(e) => handleFileUpload(obj.id, e)}
                         className="absolute inset-0 opacity-0 cursor-pointer"
-                        accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.mp3,.mp4,.wav"
+                        accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.mp3,.mp4,.wav,.webp"
                       />
                     </Button>
-                    <span className="text-sm text-gray-500">
+                    <p className="text-xs text-gray-500 mt-2">
+                      Supports: PDF, DOC, DOCX, TXT, JPG, JPEG, PNG, MP3, MP4, WAV
+                    </p>
+                    <span className="text-sm text-gray-500 block mt-2">
                       {obj.uploadedFiles.length} file(s) uploaded
                     </span>
                   </div>

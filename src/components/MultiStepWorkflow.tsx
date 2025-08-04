@@ -11,22 +11,21 @@ import { Button } from './ui/button'
 import { WorkflowProvider, useWorkflow } from '@/contexts/WorkflowContext'
 
 const steps = [
-  { id: 1, title: 'MetaPrompt', description: 'Set up prompts and objects', completed: false },
-  { id: 2, title: 'Text Blocks', description: 'Create text-focused content', completed: false },
-  { id: 3, title: 'Shots', description: 'Create scene sequences', completed: false },
+  { id: 1, title: 'Meta Prompt', description: 'Set up prompts and objects', completed: false },
+  { id: 2, title: 'Text Blocks', description: 'Scene Text Descriptions', completed: false },
+  { id: 3, title: 'Video Blocks', description: 'Scene Video sequences', completed: false },
   { id: 4, title: 'Export Content', description: 'Export your generated video', completed: false }
 ]
 
 function WorkflowContent() {
   const [currentStep, setCurrentStep] = useState(0)
   const [completedSteps, setCompletedSteps] = useState<boolean[]>([false, false, false, false])
+  const [isLoading, setIsLoading] = useState(false)
   const { data } = useWorkflow()
 
   const validateCurrentStep = () => {
     switch (currentStep) {
       case 0: // MetaPrompt validation
-        console.log(data)
-        console.log("helooo")
         return data.metaPrompt.generalPrompt.trim().length > 0
       case 1: // TextShots validation
         return data.textShots.length > 0 && data.textShots.every(textShot => textShot.content.trim().length > 0)
@@ -41,16 +40,26 @@ function WorkflowContent() {
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
+      setIsLoading(true)
       const newCompletedSteps = [...completedSteps]
       newCompletedSteps[currentStep] = true
       setCompletedSteps(newCompletedSteps)
-      setCurrentStep(currentStep + 1)
+      
+      setTimeout(() => {
+        setCurrentStep(currentStep + 1)
+        setIsLoading(false)
+      }, 1000)
     }
   }
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
+      setIsLoading(true)
+      
+      setTimeout(() => {
+        setCurrentStep(currentStep - 1)
+        setIsLoading(false)
+      }, 2000)
     }
   }
 
@@ -104,7 +113,17 @@ function WorkflowContent() {
 
         {/* Current Step Content */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-          {renderCurrentStep()}
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <img 
+                src="/spinning-logo.gif" 
+                alt="Loading..." 
+                className="w-16 h-16"
+              />
+            </div>
+          ) : (
+            renderCurrentStep()
+          )}
         </div>
 
         {/* Navigation Controls */}
@@ -152,7 +171,8 @@ function WorkflowContent() {
               disabled={false}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-md transition-all duration-200"
             >
-              {currentStep === 0 && data.metaPrompt.generalPrompt.trim().length === 0 ? 'Skip' : 'Continue'}
+              {/*{currentStep === 0 && data.metaPrompt.generalPrompt.trim().length === 0 ? 'Skip' : 'Continue'}*/}
+              Continue
               <ChevronRight className="w-4 h-4" />
             </Button>
           )}

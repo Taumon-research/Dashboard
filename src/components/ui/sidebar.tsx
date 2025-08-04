@@ -22,7 +22,7 @@ const sidebarItems = [
   { icon: Home, label: "Dashboard", href: "/" },
   { icon: Cone, label: "Refract AI", href: "/", active: true },
   { icon: BarChart3, label: "Tools", href: "/analytics" },
-  { icon: FileText, label: "Content Library", href: "/library" },
+  { icon: FileText, label: "Assets", href: "/library" },
   { icon: Users, label: "Team", href: "/team" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ]
