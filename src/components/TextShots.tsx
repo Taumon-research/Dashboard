@@ -19,62 +19,62 @@ export default function TextShots() {
     data.textShots?.length > 0 ? data.textShots : [
       {
         id: "1",
-        content: "Shot 1: Slow-motion, cinematic b-roll of nature. Think misty mountains, a tranquil lake at sunrise, or a serene forest. The focus is on the beauty and peace of the natural world.",
+        content: "Slow-motion, cinematic b-roll of nature. Think misty mountains, a tranquil lake at sunrise, or a serene forest. The focus is on the beauty and peace of the natural world.",
         referencedAssets: []
       },
       {
         id: "2",
-        content: "Shot 2: A close-up, slow pan over the subtle textures of the jacket fabric. You can see the intricate weaving and quality stitching. The lighting is soft and natural.",
+        content: "A close-up, slow pan over the subtle textures of the jacket fabric. You can see the intricate weaving and quality stitching. The lighting is soft and natural.",
         referencedAssets: []
       },
       {
         id: "3",
-        content: "Shot 3: A slow, sweeping shot of a model from behind, standing on a cliff overlooking a vast landscape. The wind gently blows the jacket. The feeling is one of contemplation and solitude.",
+        content: "A slow, sweeping shot of a model from behind, standing on a cliff overlooking a vast landscape. The wind gently blows the jacket. The feeling is one of contemplation and solitude.",
         referencedAssets: []
       },
       {
         id: "4",
-        content: "Shot 4: A quick, jarring cut from the serene landscape to a pulsating, energetic scene. The sound of a runway show begins to fade in. The shot is a fast-paced, shaky-cam shot of a bustling backstage.",
+        content: "A quick, jarring cut from the serene landscape to a pulsating, energetic scene. The sound of a runway show begins to fade in. The shot is a fast-paced, shaky-cam shot of a bustling backstage.",
         referencedAssets: []
       },
       {
         id: "5",
-        content: "Shot 5: A quick close-up on a model's face as she gets the final touch-ups of her makeup, her eyes focused and intense.",
+        content: "A quick close-up on a model's face as she gets the final touch-ups of her makeup, her eyes focused and intense.",
         referencedAssets: []
       },
       {
         id: "6",
-        content: "Shot 6: The camera follows a different model as she walks onto the runway. The runway lights are bright and dramatic.",
+        content: "The camera follows a different model as she walks onto the runway. The runway lights are bright and dramatic.",
         referencedAssets: []
       },
       {
         id: "7",
-        content: "Shot 7: A series of fast-paced, high-energy runway shots. Models of different backgrounds and body types confidently walk the runway, showing off various jackets from the new line.",
+        content: "A series of fast-paced, high-energy runway shots. Models of different backgrounds and body types confidently walk the runway, showing off various jackets from the new line.",
         referencedAssets: []
       },
       {
         id: "8",
-        content: "Shot 8: Close-ups of the jackets in motion. We see how the fabric drapes and moves, the intricate details, and the unique cuts. The lighting is sharp and highlights the jacket's silhouette.",
+        content: "Close-ups of the jackets in motion. We see how the fabric drapes and moves, the intricate details, and the unique cuts. The lighting is sharp and highlights the jacket's silhouette.",
         referencedAssets: []
       },
       {
         id: "9",
-        content: "Shot 9: A shot of the jackets styled in various ways—paired with elegant evening wear, casual street clothes, and work attire. This demonstrates the versatility of the jackets.",
+        content: "A shot of the jackets styled in various ways—paired with elegant evening wear, casual street clothes, and work attire. This demonstrates the versatility of the jackets.",
         referencedAssets: []
       },
       {
         id: "10",
-        content: "Shot 10: A final, powerful shot of a model walking towards the camera. She stops, looks directly into the lens, and smiles. The music starts to fade out.",
+        content: "A final, powerful shot of a model walking towards the camera. She stops, looks directly into the lens, and smiles. The music starts to fade out.",
         referencedAssets: []
       },
       {
         id: "11",
-        content: "Shot 11: The brand's logo appears on a black screen. A website or social media handle is included beneath it.",
+        content: "The brand's logo appears on a black screen. A website or social media handle is included beneath it.",
         referencedAssets: []
       },
       {
         id: "12",
-        content: "Shot 12: The screen slowly fades to black.",
+        content: "The screen slowly fades to black.",
         referencedAssets: []
       }
     ]
@@ -186,7 +186,20 @@ export default function TextShots() {
     setIsProcessing(true)
     
     setTimeout(() => {
-      let tmp_update_content = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"]
+      let tmp_update_content = [
+        "A blazing, high-speed drone shot zips through a dense, urban jungle of skyscrapers. The city lights blur into streaks of color.",
+        "A quick, aggressive close-up on the jacket fabric. The camera focuses intensely on the texture, highlighting a metallic sheen or a unique, rugged weave. The lighting is sharp, creating dramatic shadows.",
+        "A model, silhouetted against a setting sun, stands on the edge of a rooftop. The city sprawls below. The wind whips her jacket and hair as she stares out, a sense of unyielding power and purpose radiating from her stance.",
+        "A sudden, jarring cut from the rooftop to a pulsating, high-energy scene. The blare of a siren and the thump of a driving techno beat slam in. The shot is a fast-paced, shaky-cam shot of a thriving, neon-lit cityscape at night, full of movement and energy.",
+        "A quick, intense close-up on a model's face. Her eyes are locked on something off-camera, full of determination and fierce confidence.",
+        "The camera follows a different model as she strides with purpose onto a catwalk. The runway lights are blinding, rhythmic flashes that create a dramatic, electrifying effect. The crowd's cheers roar to life.",
+        "A series of dynamic, high-impact runway shots. Models of different backgrounds and body types strut with unshakeable confidence and attitude. The camera cuts are rapid, highlighting the various jackets from the new line.",
+        "Aggressive, close-up shots of the jackets in motion. We see how the fabric snaps and ripples with every step. The unique cuts and intricate details are highlighted by sharp, dramatic lighting.",
+        "A fast-cut montage of the jackets styled in unexpected, bold ways—paired with gritty street clothes, edgy evening wear, and futuristic athleisure.",
+        "A final, powerful and unwavering shot of a model walking towards the camera. She stops abruptly, looks directly into the lens, and gives a sultry, confident smirk. The music fades into a deep, echoing bassline.",
+        "The brand's logo appears on a black screen, with the bassline finally cutting out. A website or social media handle is included beneath it.",
+        "The screen snaps to black, leaving the viewer in a moment of silence to process the energy they just experienced."
+      ]
 
       // Update all text shots with the query content
       const updatedShots = textShots.map((shot, idx) => ({
