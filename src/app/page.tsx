@@ -1,5 +1,5 @@
-import MultiStepWorkflow from "@/components/MultiStepWorkflow"
+import { redirect } from 'next/navigation';
 
-export default function Dashboard() {
-  return <MultiStepWorkflow />
+export default function HomePage() {
+  redirect('/dashboard');
 }

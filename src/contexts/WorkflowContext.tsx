@@ -1,53 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, ReactNode } from 'react'
-
-// Types from existing components
-interface UploadedFile {
-  file: File
-  description: string
-}
-
-interface OBJ {
-  id: string
-  uploadedFiles: UploadedFile[]
-  description: string
-}
-
-interface Shot {
-  id: string
-  description: string
-  referencedContent: string
-  transitionPrompt: string
-}
-
-interface TextShot {
-  id: string
-  content: string
-  referencedAssets: string[]
-}
-
-interface VideoBlock {
-  id: string
-  textInput: string
-  parameters: {
-    quality: string
-    duration: string
-    style: string
-    mood: string
-  }
-  selectedTools: string[]
-}
-
-interface WorkflowData {
-  metaPrompt: {
-    generalPrompt: string
-    objs: OBJ[]
-  }
-  textShots: TextShot[]
-  shots: Shot[]
-  generatedContent: VideoBlock[]
-}
+import { WorkflowData, OBJ, TextShot, Shot, VideoBlock } from '@/lib/models'
 
 interface WorkflowContextType {
   data: WorkflowData
@@ -69,8 +23,8 @@ const initialData: WorkflowData = {
   generatedContent: []
 }
 
-export function WorkflowProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<WorkflowData>(initialData)
+export function WorkflowProvider({ children, initialData: initialDataProp }: { children: ReactNode, initialData?: WorkflowData }) {
+  const [data, setData] = useState<WorkflowData>(initialDataProp || initialData)
 
   const updateMetaPrompt = (generalPrompt: string, objs: OBJ[]) => {
     setData(prev => ({

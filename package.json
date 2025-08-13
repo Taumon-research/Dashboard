@@ -10,12 +10,14 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
+    "@surrealdb/node": "1.0.0-beta.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.525.0",
     "next": "^15.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "surrealdb": "^1.3.2",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7"
   },
